@@ -9,9 +9,6 @@ use CodeIgniter\Shield\Authentication\Authenticators\Session;
 
 class LoginController extends ShieldLoginController
 {
-    /**
-     * Authenticates a user and handles the redirect.
-     */
     public function loginAction(): RedirectResponse
     {
         /** @var Auth $config */
@@ -34,8 +31,8 @@ class LoginController extends ShieldLoginController
         }
 
         // Get the credentials for login
-        $credentials             = $this->request->getPost(['email', 'password']);
-        $remember                = (bool) $this->request->getPost('remember');
+        $credentials = $this->request->getPost(['email', 'password']);
+        $remember    = (bool) $this->request->getPost('remember');
 
         /** @var Session $authenticator */
         $authenticator = auth('session');
@@ -49,16 +46,13 @@ class LoginController extends ShieldLoginController
         // Get the logged-in user from the main auth service
         $user = auth()->user();
 
-        // ** CUSTOM REDIRECT LOGIC **
+        // --- SIMPLIFIED REDIRECT LOGIC ---
+        // If the user is a masteradmin or superadmin, send them to the master dashboard.
         if ($user->inGroup('masteradmin', 'superadmin')) {
             return redirect()->to('/master-dashboard');
         }
 
-        if ($user->inGroup('instructor')) {
-            return redirect()->to('/instructor-dashboard');
-        }
-
-        // Fallback for any other user roles
-        return redirect()->to($config->loginRedirect());
+        // For all other users, send them to the general dashboard.
+        return redirect()->to('/dashboard');
     }
 }

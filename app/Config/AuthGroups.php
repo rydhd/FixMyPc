@@ -66,10 +66,10 @@ class AuthGroups extends ShieldAuthGroups
             'title'       => 'Master Key',
             'description' => 'Master Key with access to admin features.',
         ],
-        'instructor' => [
-            'title'       => 'Instructor',
-            'description' => 'Instructor with access to instructor features.',
-        ],
+//        'instructor' => [
+//            'title'       => 'Instructor',
+//            'description' => 'Instructor with access to instructor features.',
+//        ],
     ];
 
     /**

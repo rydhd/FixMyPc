@@ -6,17 +6,22 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-// Tell Shield to generate all auth routes EXCEPT for the login routes
+// --- AUTH ROUTES ---
+// Generate all auth routes EXCEPT for the login routes.
 service('auth')->routes($routes, ['except' => ['login']]);
-$routes->get('/', 'InstructorController::dashboard');
 
-// Define our own custom login routes that point to our custom controller
+// Define our own custom login routes.
+$routes->get('/', 'LoginController::loginView');
 $routes->get('login', '\App\Controllers\LoginController::loginView');
 $routes->post('login', '\App\Controllers\LoginController::loginAction');
 
 
-// --- CORRECTED FILTER SYNTAX ---
-// Custom Dashboard Routes with filters applied as an array
+// --- DASHBOARD ROUTES ---
+// A general dashboard for any logged-in user.
+// We will use the default Home controller for this.
+$routes->get('dashboard', 'InstructorController::dashboard', ['filter' => 'session']);
+
+// The dashboard for master admins, protected by the group filter.
 $routes->get('master-dashboard', 'MasterAdminController::dashboard', [
     'filter' => ['session', 'group:masteradmin,superadmin']
 ]);

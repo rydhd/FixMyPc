@@ -100,6 +100,7 @@ class Auth extends ShieldAuth
     public array $actions = [
         'register' => null,
         'login'    => null,
+
     ];
 
     /**

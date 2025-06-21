@@ -61,6 +61,15 @@ class AuthGroups extends ShieldAuthGroups
             'title'       => 'Beta User',
             'description' => 'Has access to beta-level features.',
         ],
+        // Add your new groups here
+        'masteradmin' => [
+            'title'       => 'Master Key',
+            'description' => 'Master Key with access to admin features.',
+        ],
+        'instructor' => [
+            'title'       => 'Instructor',
+            'description' => 'Instructor with access to instructor features.',
+        ],
     ];
 
     /**
@@ -112,6 +121,14 @@ class AuthGroups extends ShieldAuthGroups
         'user' => [],
         'beta' => [
             'beta.access',
+        ],
+        // Assign permissions to your new groups if needed
+        'masteradmin' => [
+            'admin.*',
+            'users.*',
+        ],
+        'instructor' => [
+            'admin.access',
         ],
     ];
 }

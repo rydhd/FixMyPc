@@ -34,17 +34,17 @@
                             <li class="nav-item dropdown me-3">
                                 <a class="nav-link active dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                     <div class="user-menu d-flex">
-                                        <div class="user-name text-end me-3">
-                                            <h6 class="mb-0 text-gray-600"><?= auth()->user()->username ?></h6>
-                                            <p class="mb-0 text-sm text-gray-600">
-                                                <?php // You can check the user's group like this
-                                                if (auth()->user()->inGroup('superadmin', 'admin')): ?>
-                                                    Administrator
-                                                <?php else: ?>
-                                                    User
-                                                <?php endif; ?>
-                                            </p>
-                                        </div>
+<!--                                        <div class="user-name text-end me-3">-->
+<!--                                            <h6 class="mb-0 text-gray-600">--><?php //= auth()->user()->username ?><!--</h6>-->
+<!--                                            <p class="mb-0 text-sm text-gray-600">-->
+<!--                                                --><?php //// You can check the user's group like this
+//                                                if (auth()->user()->inGroup('superadmin', 'admin')): ?>
+<!--                                                    Administrator-->
+<!--                                                --><?php //else: ?>
+<!--                                                    User-->
+<!--                                                --><?php //endif; ?>
+<!--                                            </p>-->
+<!--                                        </div>-->
                                         <div class="user-img d-flex align-items-center">
                                             <div class="avatar avatar-md">
                                                 <img src="<?= base_url('assets/images/faces/1.jpg') ?>">
@@ -53,7 +53,7 @@
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                    <li><h6 class="dropdown-header">Hello, <?= auth()->user()->username ?>!</h6></li>
+<!--                                    <li><h6 class="dropdown-header">Hello, --><?php //= auth()->user()->username ?><!--!</h6></li>-->
                                     <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-person me-2"></i> My Profile</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="<?= site_url('logout') ?>"><i class="icon-mid bi bi-box-arrow-right me-2"></i> Logout</a></li>

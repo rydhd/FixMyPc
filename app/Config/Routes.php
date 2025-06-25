@@ -18,8 +18,8 @@ $routes->post('login', '\App\Controllers\LoginController::loginAction');
 
 // --- DASHBOARD ROUTES ---
 // A general dashboard for any logged-in user.
-// We will use the default Home controller for this.
 $routes->get('dashboard', 'InstructorController::dashboard', ['filter' => 'session']);
+$routes->get('students', 'InstructorController::students', ['filter' => 'session']);
 
 // The dashboard for master admins, protected by the group filter.
 $routes->get('master-dashboard', 'MasterAdminController::dashboard', [

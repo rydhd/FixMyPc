@@ -9,7 +9,7 @@ use CodeIgniter\Shield\Authentication\Authenticators\Session;
 
 class LoginController extends ShieldLoginController
 {
-    public function loginAction(): RedirectResponse
+        public function loginAction(): RedirectResponse
     {
         /** @var Auth $config */
         $config = config(Auth::class);

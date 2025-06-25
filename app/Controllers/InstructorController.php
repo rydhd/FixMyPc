@@ -8,5 +8,7 @@ class InstructorController extends BaseController
     {
         return view('instructor/dashboard');
     }
-
+    public function students(){
+        return view('instructor/students');
+    }
 }

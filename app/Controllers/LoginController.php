@@ -47,12 +47,11 @@ class LoginController extends ShieldLoginController
         $user = auth()->user();
 
         // --- SIMPLIFIED REDIRECT LOGIC ---
-        // If the user is a masteradmin or superadmin, send them to the master dashboard.
         if ($user->inGroup('masteradmin', 'superadmin')) {
-            return redirect()->to('/master-dashboard');
+            // Alternative corrected line in LoginController.php
+            return redirect()->route('master-dashboard');
         }
-
         // For all other users, send them to the general dashboard.
-        return redirect()->to('/dashboard');
+            return redirect()->to(site_url('dashboard'));
     }
 }

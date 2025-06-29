@@ -6,11 +6,12 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
+
 // --- AUTH ROUTES ---
-// Generate all auth routes EXCEPT for the login routes.
+// All of the auth routes the login for avoiding loping through
 service('auth')->routes($routes, ['except' => ['login']]);
 
-// Define our own custom login routes.
+//Login routes.
 $routes->get('/', 'LoginController::loginView');
 $routes->get('login', '\App\Controllers\LoginController::loginView');
 $routes->post('login', '\App\Controllers\LoginController::loginAction');
@@ -23,5 +24,9 @@ $routes->get('students', 'InstructorController::students', ['filter' => 'session
 
 // The dashboard for master admins, protected by the group filter.
 $routes->get('master-dashboard', 'MasterAdminController::dashboard', [
+    'filter' => ['session', 'group:masteradmin,superadmin']
+]);
+// The dashboard for master admins, protected by the group filter.
+$routes->get('master-students', 'MasterAdminController::students', [
     'filter' => ['session', 'group:masteradmin,superadmin']
 ]);

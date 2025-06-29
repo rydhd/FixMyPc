@@ -1,4 +1,4 @@
-<?= $this->extend('layouts/master') ?>
+<?= $this->extend('layouts/instructor_master') ?>
 
 <?= $this->section('content') ?>
     <div class="page-heading">
@@ -8,5 +8,5 @@
             </div>
         </div>
     </div>
-<?= $this->include('partials/chart') ?>
+<?= $this->include('instructor_partials/chart') ?>
 <?= $this->endSection() ?>

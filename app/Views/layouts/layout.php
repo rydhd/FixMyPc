@@ -1,3 +1,5 @@
+<!--For applying template onto Login/Register Page -->
+
 <!doctype html>
 <html lang="en">
 <head>

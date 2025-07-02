@@ -21,20 +21,20 @@
             </div>
             <ul class="menu">
                 <li class="sidebar-item active ">
-                    <a href="/dashboard" class='sidebar-link'>
+                    <a href="/master/dashboard" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Home</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item">
-                    <a href="<?= site_url('master_admin/master_students') ?>" class='sidebar-link'>
+                    <a href="/master/students" class='sidebar-link'>
                         <i class="bi bi-people-fill"></i>
                         <span>Students</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="/instructor" class='sidebar-link'>
+                    <a href="/master/instructor" class='sidebar-link'>
                         <i class="bi bi-people-fill"></i>
                         <span>Assessor</span>
                     </a>

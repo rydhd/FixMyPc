@@ -1,14 +1,7 @@
-<?= $this->extend('layouts/instructor_master') ?>
+<?= $this->extend('layouts/master_admin_master') ?>
 
 <?= $this->section('content') ?>
-<div class="col-12 col-md-6 order-md-2 order-first">
-    <div class="buttons">
-        <a href="../instructor_partials/add_class.php" id="load-class-btn" class="btn btn-primary rounded-pill">+ Class List</a>
-    </div>
-</div>
 
-<div id="class-list-container" class="mt-4">
-</div>
 <div class="row">
     <div class="col-md-6">
         <div class="card">

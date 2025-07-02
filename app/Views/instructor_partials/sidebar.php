@@ -21,14 +21,14 @@
             </div>
             <ul class="menu">
                 <li class="sidebar-item active ">
-                    <a href="/dashboard" class='sidebar-link'>
+                    <a href="/instructor/dashboard" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Home</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item">
-                    <a href="/students" class='sidebar-link'>
+                    <a href="/instructor/students" class='sidebar-link'>
                         <i class="bi bi-people-fill"></i>
                         <span>Students</span>
                     </a>

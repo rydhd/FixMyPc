@@ -9,7 +9,10 @@ use CodeIgniter\Shield\Authentication\Authenticators\Session;
 
 class LoginController extends ShieldLoginController
 {
-        public function loginAction(): RedirectResponse
+    /**
+     * Attempts to log the user in.
+     */
+    public function loginAction(): RedirectResponse
     {
         /** @var Auth $config */
         $config = config(Auth::class);
@@ -26,32 +29,44 @@ class LoginController extends ShieldLoginController
             ],
         ];
 
+        // Validate the incoming data
         if (! $this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
         // Get the credentials for login
-        $credentials = $this->request->getPost(['email', 'password']);
-        $remember    = (bool) $this->request->getPost('remember');
+        // Use the fields defined in Auth.validFields setting for credentials
+        $credentials = $this->request->getPost(setting('Auth.validFields'));
+        // Ensure password is included as it's not always in validFields
+        $credentials['password'] = $this->request->getPost('password');
+
+        $remember = (bool) $this->request->getPost('remember');
 
         /** @var Session $authenticator */
-        $authenticator = auth('session');
+        $authenticator = auth('session')->getAuthenticator(); // Get the authenticator instance
 
         // Attempt to login
         $result = $authenticator->remember($remember)->attempt($credentials);
+
+        // If login failed, redirect back with an error
         if (! $result->isOK()) {
             return redirect()->route('login')->withInput()->with('error', $result->reason());
         }
 
-        // Get the logged-in user from the main auth service
+        // If an action has been defined for login (e.g., email verification), start it up.
+        if ($authenticator->hasAction()) {
+            return redirect()->route('auth-action-show')->withCookies();
+        }
+
+        // Get the logged-in user
         $user = auth()->user();
 
-        // --- SIMPLIFIED REDIRECT LOGIC ---
+        // Redirect based on user group
         if ($user->inGroup('masteradmin', 'superadmin')) {
-            // Alternative corrected line in LoginController.php
-            return redirect()->route('master-dashboard');
+            return redirect()->route('master_dashboard')->withCookies();
         }
+
         // For all other users, send them to the general dashboard.
-            return redirect()->to(site_url('dashboard'));
+        return redirect()->route('dashboard')->withCookies();
     }
 }

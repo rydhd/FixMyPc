@@ -33,8 +33,18 @@ $routes->group('instructor', ['filter' => 'session'], function($routes) {
     // Corresponds to 'dashboard'
     $routes->get('dashboard', 'InstructorController::dashboard',['as' => 'dashboard']);
 
-    // Corresponds to 'dashboard/students'
-    $routes->get('students', 'InstructorController::students',['as' => 'students']);
+    $routes->get('students', 'InstructorController::students', ['as' => 'students']);
+    $routes->post('classlist/upload', 'InstructorController::uploadClasslist');
+    $routes->post('students/delete/(:num)', 'InstructorController::deleteStudent/$1');
+
+// Handles showing the edit form
+    $routes->get('students/edit/(:num)', 'InstructorController::edit/$1');
+
+// Handles the submission of the edit form
+    $routes->post('students/update/(:num)', 'InstructorController::update/$1');
+
+    // ✅ ADD THIS LINE FOR THE DELETE ALL ACTION
+    $routes->post('students/delete-all', 'InstructorController::deleteAllStudents');
 
 });
 

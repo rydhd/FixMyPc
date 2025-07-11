@@ -1,67 +1,20 @@
 <?php
 
-namespace App\Controllers; // <-- THE FIX IS HERE
+namespace App\Controllers;
 
+use App\Models\AccessCodeModel; // 👈 Add this line
 use CodeIgniter\Events\Events;
 use CodeIgniter\HTTP\RedirectResponse;
-use CodeIgniter\HTTP\RequestInterface;
-use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\Shield\Entities\User;
 use CodeIgniter\Shield\Exceptions\ValidationException;
 use CodeIgniter\Shield\Models\UserModel;
 use CodeIgniter\Shield\Traits\Viewable;
-use CodeIgniter\Shield\Validation\ValidationRules;
-use Psr\Log\LoggerInterface;
 
-/**
- * Class RegisterController
- *
- * Handles displaying registration form,
- * and handling actual registration flow.
- */
-class RegisterController extends BaseController
+// Note: The original file had a comment about a namespace fix.
+// Assuming App\Controllers is the correct namespace.
+class RegisterController extends \CodeIgniter\Shield\Controllers\RegisterController
 {
     use Viewable;
-
-    public function initController(
-        RequestInterface $request,
-        ResponseInterface $response,
-        LoggerInterface $logger
-    ): void {
-        parent::initController(
-            $request,
-            $response,
-            $logger
-        );
-    }
-
-    /**
-     * Displays the registration form.
-     *
-     * @return RedirectResponse|string
-     */
-    public function registerView()
-    {
-        if (auth()->loggedIn()) {
-            return redirect()->to(config('Auth')->registerRedirect());
-        }
-
-        // Check if registration is allowed
-        if (! setting('Auth.allowRegistration')) {
-            return redirect()->back()->withInput()
-                ->with('error', lang('Auth.registerDisabled'));
-        }
-
-        /** @var \CodeIgniter\Shield\Authentication\Authenticators\Session $authenticator */
-        $authenticator = auth('session')->getAuthenticator();
-
-        // If an action has been defined, start it up.
-        if ($authenticator->hasAction()) {
-            return redirect()->route('auth-action-show');
-        }
-
-        return $this->view(setting('Auth.views')['register']);
-    }
 
     /**
      * Attempts to register the user.
@@ -80,8 +33,7 @@ class RegisterController extends BaseController
 
         $users = $this->getUserProvider();
 
-        // Validate here first, since some things,
-        // like the password, can only be validated properly here.
+        // Validate here first
         $rules = $this->getValidationRules();
 
         if (! $this->validateData($this->request->getPost(), $rules, [], config('Auth')->DBGroup)) {
@@ -107,10 +59,32 @@ class RegisterController extends BaseController
         // To get the complete user object with ID, we need to get from the database
         $user = $users->findById($users->getInsertID());
 
-        // Add to default group
-        $users->addToDefaultGroup($user);
+        // ❗ Custom logic starts here
+        $accessCodeModel = new AccessCodeModel();
+        $accessCode = $this->request->getPost('access_code');
+
+        // Mark the access code as used
+        $accessCodeModel->where('code', $accessCode)
+            ->set([
+                'is_used' => 1,
+                'used_by' => $user->id,
+                'used_at' => date('Y-m-d H:i:s')
+            ])
+            ->update();
+
+        // Add user to the 'instructor' group
+        $user->addGroup('user');
+        // ❗ Custom logic ends here
 
         Events::trigger('register', $user);
+
+        /** @var \CodeIgniter\Shield\Authentication\Authenticators\Session $authenticator */
+        $authenticator = auth('session')->getAuthenticator();
+
+        // If an action has been defined for registration, start it up.
+        if ($authenticator->hasAction()) {
+            return redirect()->route('auth-action-show');
+        }
 
         // Set the user active
         $user->activate();
@@ -121,34 +95,24 @@ class RegisterController extends BaseController
     }
 
     /**
-     * Returns the User provider
-     */
-    protected function getUserProvider(): UserModel
-    {
-        $provider = model(setting('Auth.userProvider'));
-
-        assert($provider instanceof UserModel, 'Config Auth.userProvider is not a valid UserProvider.');
-
-        return $provider;
-    }
-
-    /**
-     * Returns the Entity class that should be used
-     */
-    protected function getUserEntity(): User
-    {
-        return new User();
-    }
-
-    /**
      * Returns the rules that should be used for validation.
      *
      * @return array<string, array<string, list<string>|string>>
      */
     protected function getValidationRules(): array
     {
-        $rules = new ValidationRules();
+        // Get default registration rules from Shield
+        $rules = parent::getValidationRules();
 
-        return $rules->getRegistrationRules();
+        // Add our custom access code rule
+        $rules['access_code'] = [
+            'label' => 'Access Code',
+            'rules' => 'required|is_not_unique[access_codes.code,is_used,0]',
+            'errors' => [
+                'is_not_unique' => 'The provided Access Code is invalid or has already been used.'
+            ]
+        ];
+
+        return $rules;
     }
 }

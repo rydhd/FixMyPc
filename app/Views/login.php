@@ -4,68 +4,79 @@
 
 <?= $this->section('main') ?>
 
-    <div id="auth-left">
-        <div class="auth-logo">
-            <a href="/"><img src="<?= base_url('assets/compiled/svg/logo.svg') ?>" alt="Logo"></a>
-        </div>
-        <h1 class="auth-title"><?= lang('Auth.login') ?></h1>
-        <p class="auth-subtitle mb-5">Log in with your data that you entered during registration.</p>
+    <div id="auth">
+        <div class="row h-100">
+            <div class="col-lg-5 col-12">
+                <div id="auth-left">
+                    <div class="auth-logo">
+                        <a href="/"><img src="<?= base_url('assets/compiled/svg/logo.svg') ?>" alt="Logo"></a>
+                    </div>
+                    <h1 class="auth-title"><?= lang('Auth.login') ?></h1>
+                    <p class="auth-subtitle mb-5">Log in with your data that you entered during registration.</p>
 
-        <?php if (session('message') !== null) : ?>
-            <div class="alert alert-success" role="alert"><?= session('message') ?></div>
-        <?php endif ?>
+                    <?php if (session('message') !== null) : ?>
+                        <div class="alert alert-success" role="alert"><?= session('message') ?></div>
+                    <?php endif ?>
 
-        <?php if (session('error') !== null) : ?>
-            <div class="alert alert-danger" role="alert"><?= session('error') ?></div>
-        <?php elseif (session('errors') !== null) : ?>
-            <div class="alert alert-danger" role="alert">
-                <?php if (is_array(session('errors'))) : ?>
-                    <?php foreach (session('errors') as $error) : ?>
-                        <?= $error ?>
-                        <br>
-                    <?php endforeach ?>
-                <?php else : ?>
-                    <?= session('errors') ?>
-                <?php endif ?>
-            </div>
-        <?php endif ?>
+                    <?php if (session('error') !== null) : ?>
+                        <div class="alert alert-danger" role="alert"><?= session('error') ?></div>
+                    <?php elseif (session('errors') !== null) : ?>
+                        <div class="alert alert-danger" role="alert">
+                            <?php if (is_array(session('errors'))) : ?>
+                                <?php foreach (session('errors') as $error) : ?>
+                                    <?= $error ?>
+                                    <br>
+                                <?php endforeach ?>
+                            <?php else : ?>
+                                <?= session('errors') ?>
+                            <?php endif ?>
+                        </div>
+                    <?php endif ?>
 
+                    <form action="<?= url_to('login') ?>" method="post">
+                        <?= csrf_field() ?>
 
-        <form action="<?= url_to('login') ?>" method="post">
-            <?= csrf_field() ?>
+                        <div class="form-group position-relative has-icon-left mb-4">
+                            <input type="email" class="form-control form-control-xl" name="email" inputmode="email" autocomplete="email" placeholder="<?= lang('Auth.email') ?>" value="<?= old('email') ?>" required>
+                            <div class="form-control-icon">
+                                <i class="bi bi-person"></i>
+                            </div>
+                        </div>
 
-            <div class="form-group position-relative has-icon-left mb-4">
-                <input type="email" class="form-control form-control-xl" name="email" inputmode="email" autocomplete="email" placeholder="<?= lang('Auth.email') ?>" value="<?= old('email') ?>" required>
-                <div class="form-control-icon">
-                    <i class="bi bi-person"></i>
+                        <div class="form-group position-relative has-icon-left mb-4">
+                            <input type="password" class="form-control form-control-xl" name="password" inputmode="text" autocomplete="current-password" placeholder="<?= lang('Auth.password') ?>" required>
+                            <div class="form-control-icon">
+                                <i class="bi bi-shield-lock"></i>
+                            </div>
+                        </div>
+
+                        <?php if (setting('Auth.sessionConfig')['allowRemembering']): ?>
+                            <div class="form-check form-check-lg d-flex align-items-end">
+                                <input class="form-check-input me-2" type="checkbox" name="remember" <?php if (old('remember')): ?> checked<?php endif ?>>
+                                <label class="form-check-label text-gray-600" for="flexCheckDefault">
+                                    <?= lang('Auth.rememberMe') ?>
+                                </label>
+                            </div>
+                        <?php endif; ?>
+
+                        <button type="submit" class="btn btn-primary btn-block btn-lg shadow-lg mt-5"><?= lang('Auth.login') ?></button>
+                    </form>
+
+                    <div class="text-center mt-5 text-lg fs-4">
+                        <?php if (setting('Auth.allowRegistration')) : ?>
+                            <p class="text-gray-600"><?= lang('Auth.needAccount') ?> <a href="<?= url_to('register') ?>" class="font-bold"><?= lang('Auth.register') ?></a></p>
+                        <?php endif ?>
+                        <?php if (setting('Auth.allowMagicLinkLogins')) : ?>
+                            <p><a class="font-bold" href="<?= url_to('magic-link') ?>"><?= lang('Auth.forgotPassword') ?></a></p>
+                        <?php endif ?>
+                    </div>
                 </div>
             </div>
+            <div class="col-lg-7 d-none d-lg-block">
+                <div id="auth-right">
 
-            <div class="form-group position-relative has-icon-left mb-4">
-                <input type="password" class="form-control form-control-xl" name="password" inputmode="text" autocomplete="current-password" placeholder="<?= lang('Auth.password') ?>" required>
-                <div class="form-control-icon">
-                    <i class="bi bi-shield-lock"></i>
                 </div>
             </div>
-
-            <?php if (setting('Auth.sessionConfig')['allowRemembering']): ?>
-                <div class="form-check form-check-lg d-flex align-items-end">
-                    <input class="form-check-input me-2" type="checkbox" name="remember" <?php if (old('remember')): ?> checked<?php endif ?>>
-                    <label class="form-check-label text-gray-600" for="flexCheckDefault">
-                        <?= lang('Auth.rememberMe') ?>
-                    </label>
-                </div>
-            <?php endif; ?>
-
-            <button type="submit" class="btn btn-primary btn-block btn-lg shadow-lg mt-5"><?= lang('Auth.login') ?></button>
-        </form>
-        <div class="text-center mt-5 text-lg fs-4">
-            <?php if (setting('Auth.allowRegistration')) : ?>
-                <p class="text-gray-600"><?= lang('Auth.needAccount') ?> <a href="<?= url_to('register') ?>" class="font-bold"><?= lang('Auth.register') ?></a></p>
-            <?php endif ?>
-            <?php if (setting('Auth.allowMagicLinkLogins')) : ?>
-                <p><a class="font-bold" href="<?= url_to('magic-link') ?>"><?= lang('Auth.forgotPassword') ?></a></p>
-            <?php endif ?>
         </div>
     </div>
 

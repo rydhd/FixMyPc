@@ -3,7 +3,7 @@
 <?= $this->section('content') ?>
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-body">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -18,10 +18,10 @@
                 </ul>
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <?= $this->include('instructor_partials/student_table') ?>
+                        <?= $this->include('master_admin_partials/student_table') ?>
                     </div>
                     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                        <?= $this->include('instructor_partials/statistics_table') ?>
+                        <?= $this->include('master_admin_partials/statistics_table') ?>
                     </div>
                 </div>
             </div>

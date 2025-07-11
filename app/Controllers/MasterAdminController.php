@@ -2,7 +2,13 @@
 
 namespace App\Controllers;
 
-use App\Models\AccessCodeModel; // 👈 Add this line to import the model
+use App\Models\AccessCodeModel;
+use App\Models\InstructorStudentModel;
+use App\Models\StudentModel;
+// You'll need to import the InstructorModel at the top of the file
+use App\Models\InstructorModel;
+
+// 👈 Add this line to import the model
 
 class MasterAdminController extends BaseController
 {
@@ -13,18 +19,100 @@ class MasterAdminController extends BaseController
 
     public function students()
     {
-        return view('master_admin/master_students');
+        // 1. Create a new instance of the StudentModel.
+        // This object gives us access to the 'students' database table.
+        $studentModel = new StudentModel();
+
+        // 2. Prepare an array to hold the data we'll pass to the view.
+        $data = [
+            // 3. Fetch all student records from the database using the findAll() method
+            // and assign them to the 'students' key.
+            'students' => $studentModel->orderBy('last_name', 'ASC')->findAll()
+        ];
+
+        // 4. Load the view file and pass the $data array to it.
+        // The view can now access the list of students via a $students variable.
+        return view('master_admin/master_students', $data);
     }
+
     public function instructor()
     {
-        return view('master_admin/master_instructor');
+        // 1. Create an instance of the InstructorModel
+        $instructorModel = new \App\Models\InstructorModel();
+
+        // 2. Prepare the data for the view
+        $data = [
+            // 3. Call the new custom method to get the joined data
+            'instructors' => $instructorModel->getInstructorsWithUserDetails()
+        ];
+
+        // 4. Load the view and pass the data to it
+        return view('master_admin/master_instructor', $data);
     }
 
-    // --- NEW METHODS FOR ACCESS CODES ---
+    public function edit(int $studentId)
+    {
+        $studentModel = new StudentModel();
+
+        // Fetch the student data directly without the incorrect permission check.
+        $data['student'] = $studentModel->find($studentId);
+
+        // If the student doesn't exist, show a 404 error.
+        if (empty($data['student'])) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Student not found with ID: ' . $studentId);
+        }
+
+        // Load the view and pass the student data to it.
+        return view('master_admin/edit_student', $data);
+    }
 
     /**
-     * Displays the page to view and manage access codes.
+     * Handles the submission of the student edit form.
      */
+    public function update(int $studentId)
+    {
+        $studentModel = new StudentModel();
+
+        // Prepare the data from the form POST request
+        $data = [
+            'first_name'  => $this->request->getPost('first_name'),
+            'last_name'   => $this->request->getPost('last_name'),
+            'middle_name' => $this->request->getPost('middle_name'),
+            'grade_level' => $this->request->getPost('grade_level'),
+            'section'     => $this->request->getPost('section'),
+            'code'        => $this->request->getPost('code'),
+        ];
+
+        // Only update the password if a new one was provided
+        $password = $this->request->getPost('password');
+        if (!empty($password)) {
+            // It's crucial to hash passwords before saving them!
+            $data['password'] = password_hash($password, PASSWORD_DEFAULT);
+        }
+
+        // Update the student record in the database
+        if ($studentModel->update($studentId, $data)) {
+            return redirect()->to('/master/students')->with('message', 'Student updated successfully.');
+        }
+
+        // If the update fails, redirect back with the errors
+        return redirect()->back()->withInput()->with('errors', $studentModel->errors());
+    }
+    public function deleteStudent(int $studentId)
+    {
+        $studentModel = new StudentModel();
+
+        // Find the student to ensure it exists before trying to delete
+        if ($studentModel->find($studentId)) {
+            // Delete the student record
+            $studentModel->delete($studentId);
+            // Redirect back to the student list with a success message
+            return redirect()->to('/master/students')->with('message', 'Student successfully deleted.');
+        }
+
+        // If the student wasn't found, redirect with an error
+        return redirect()->to('/master/students')->with('error', 'Student not found or could not be deleted.');
+    }
     public function accessCodes()
     {
         $accessCodeModel = new AccessCodeModel();
@@ -62,7 +150,7 @@ class MasterAdminController extends BaseController
 
         // Save the new code to the database
         if ($accessCodeModel->save($data)) {
-            return redirect()->to('/master-admin/access-codes')->with('message', 'Successfully generated a new access code!');
+            return redirect()->to('/master/access-codes')->with('message', 'Successfully generated a new access code!');
         } else {
             return redirect()->back()->with('error', 'Failed to generate access code. Please try again.');
         }

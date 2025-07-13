@@ -2,15 +2,102 @@
 
 namespace App\Controllers;
 
+use App\Models\AccessCodeModel;
+use App\Models\InstructorModel;
 use App\Models\StudentModel;
 use App\Models\InstructorStudentModel;
+use CodeIgniter\Shield\Models\UserModel;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 class InstructorController extends BaseController
 {
     public function dashboard()
     {
-        return view('instructor/dashboard');
+        // Initialize the model that links instructors to students
+        $instructorStudentModel = new InstructorStudentModel();
+
+        // Get the ID of the currently logged-in instructor
+        $instructorId = auth()->id();
+
+        // Count all students where the 'instructor_id' matches
+        $data['student_count'] = $instructorStudentModel
+            ->where('instructor_id', $instructorId)
+            ->countAllResults();
+
+        // Load the dashboard view and pass the student count to it
+        return view('instructor/dashboard', $data);
+    }
+    public function profile()
+    {
+
+        $instructorModel = new InstructorModel();
+        $accessCodeModel = new AccessCodeModel(); // ✅ Add this line
+        $userId = auth()->id();
+
+        // Find the instructor profile linked to the logged-in user
+        $data['instructor'] = $instructorModel->where('user_id', $userId)->first();
+
+        // ✅ Fetch the access code from the `access_codes` table where `used_by` matches the user's ID
+        $data['access_code'] = $accessCodeModel->where('used_by', $userId)->first();
+
+        // We no longer need the full user object for this
+        // $data['user'] = auth()->user();
+
+        return view('instructor/profile', $data);
+    }
+    public function updateProfile()
+    {
+        $instructorModel = new InstructorModel();
+        $userId = auth()->id();
+
+        // 1. Define Validation Rules
+        $rules = [
+            'first_name' => 'required|alpha_space|max_length[100]',
+            'last_name'  => 'required|alpha_space|max_length[100]',
+            'middle_name'=> 'permit_empty|alpha_space|max_length[100]',
+            'grade_level'=> 'permit_empty|string|max_length[50]',
+            'section'    => 'permit_empty|string|max_length[50]',
+            'code'       => 'permit_empty|alpha_numeric_punct|max_length[50]',
+            // ✅ Add password validation rules
+            'password'   => 'permit_empty|strong_password',
+            'password_confirm' => 'matches[password]',
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // 2. Get validated data
+        $postData = $this->validator->getValidated();
+
+        // ✅ START: Password Update Logic
+        // If a new password was provided, update the user's credentials
+        if (!empty($postData['password'])) {
+            $users = new UserModel();
+            $user = auth()->user();
+
+            // The `fill` method will trigger the Shield mutator to hash the password
+            $user->fill(['password' => $postData['password']]);
+            $users->save($user);
+        }
+        // ✅ END: Password Update Logic
+
+        // 3. Find if a profile already exists
+        $existingInstructor = $instructorModel->where('user_id', $userId)->first();
+
+        // Remove password fields so they aren't saved to the instructor profile
+        unset($postData['password'], $postData['password_confirm']);
+
+        if ($existingInstructor) {
+            // UPDATE existing profile
+            $instructorModel->update($existingInstructor['id'], $postData);
+        } else {
+            // CREATE new profile, adding the user_id
+            $postData['user_id'] = $userId;
+            $instructorModel->save($postData);
+        }
+
+        return redirect()->to('instructor/profile')->with('message', 'Profile updated successfully!');
     }
 
     /**

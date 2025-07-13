@@ -5,6 +5,11 @@ var optionsProfileVisit = {
   dataLabels: {
     enabled: false,
   },
+  // ADDED: A title for the chart
+  title: {
+    text: 'Section Performance (%)',
+    align: 'center'
+  },
   chart: {
     type: "bar",
     height: 300,
@@ -15,27 +20,35 @@ var optionsProfileVisit = {
   plotOptions: {},
   series: [
     {
-      name: "sales",
-      data: [9, 20, 30, 20, 10, 20, 30, 20, 10, 20, 30, 20],
+      // CHANGED: Series name to be more descriptive
+      name: "Average Score",
+      // CHANGED: Data to reflect percentages for each section
+      data: [88, 76, 92, 81, 68, 95],
     },
   ],
   colors: "#435ebe",
   xaxis: {
+    // CHANGED: Categories to represent sections instead of months
     categories: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      "Section A",
+      "Section B",
+      "Section C",
+      "Section D",
+      "Section E",
+      "Section F",
     ],
   },
+  // ADDED: Y-axis configuration to format labels as percentages
+  yaxis: {
+    title: {
+      text: "Percentage Completed (%)"
+    },
+    labels: {
+      formatter: function (val) {
+        return val + "%";
+      }
+    }
+  }
 }
 let optionsVisitorsProfile = {
   series: [70, 30],
@@ -131,24 +144,24 @@ let optionsIndonesia = {
 }
 
 var chartProfileVisit = new ApexCharts(
-  document.querySelector("#chart-profile-visit"),
-  optionsProfileVisit
+    document.querySelector("#chart-profile-visit"),
+    optionsProfileVisit
 )
 var chartVisitorsProfile = new ApexCharts(
-  document.getElementById("chart-visitors-profile"),
-  optionsVisitorsProfile
+    document.getElementById("chart-visitors-profile"),
+    optionsVisitorsProfile
 )
 var chartEurope = new ApexCharts(
-  document.querySelector("#chart-europe"),
-  optionsEurope
+    document.querySelector("#chart-europe"),
+    optionsEurope
 )
 var chartAmerica = new ApexCharts(
-  document.querySelector("#chart-america"),
-  optionsAmerica
+    document.querySelector("#chart-america"),
+    optionsAmerica
 )
 var chartIndonesia = new ApexCharts(
-  document.querySelector("#chart-indonesia"),
-  optionsIndonesia
+    document.querySelector("#chart-indonesia"),
+    optionsIndonesia
 )
 
 chartIndonesia.render()

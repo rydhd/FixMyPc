@@ -28,12 +28,12 @@ class InstructorModel extends Model
     public function getInstructorsWithUserDetails(): array
     {
         return $this
-            // Get email from `secret` column in auth_identities and rename it to `email`
-            ->select('instructors.*, users.username, auth_identities.secret as email')
+            // ✅ Select the access code and alias it
+            ->select('instructors.*, users.username, auth_identities.secret as email, access_codes.code as access_code')
             ->join('users', 'users.id = instructors.user_id')
-            // Join the identities table to find the email address
             ->join('auth_identities', 'auth_identities.user_id = users.id')
-            // Specify that we want the email/password identity, not others (like social logins)
+            // ✅ Add a LEFT JOIN to the access_codes table
+            ->join('access_codes', 'access_codes.used_by = users.id', 'left')
             ->where('auth_identities.type', 'email_password')
             ->findAll();
     }

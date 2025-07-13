@@ -13,8 +13,7 @@
                     <th>EMAIL</th>
                     <th>SECTION</th>
                     <th>GRADE LEVEL</th>
-                    <th>CODE</th>
-                </tr>
+                    <th>ACCESS CODE</th> </tr>
                 </thead>
                 <tbody>
                 <?php if (!empty($instructors) && is_array($instructors)): ?>
@@ -26,7 +25,7 @@
                             <td><?= esc($instructor['email']) ?></td>
                             <td><?= esc($instructor['section']) ?></td>
                             <td><?= esc($instructor['grade_level']) ?></td>
-                            <td class="text-bold-500"><?= esc($instructor['code']) ?></td>
+                            <td><?= esc($instructor['access_code']) ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>

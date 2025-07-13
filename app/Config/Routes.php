@@ -28,6 +28,9 @@ $routes->group('instructor', ['filter' => 'session'], function($routes) {
     $routes->get('dashboard', 'InstructorController::dashboard',['as' => 'dashboard']);
 
     $routes->get('students', 'InstructorController::students', ['as' => 'students']);
+    $routes->get('profile', 'InstructorController::profile', ['as' => 'profile']);
+    $routes->post('profile/update', 'InstructorController::updateProfile');
+
     $routes->post('classlist/upload', 'InstructorController::uploadClasslist');
     $routes->post('students/delete/(:num)', 'InstructorController::deleteStudent/$1');
 

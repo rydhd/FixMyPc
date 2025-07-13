@@ -14,7 +14,12 @@ class MasterAdminController extends BaseController
 {
     public function dashboard()
     {
-        return view('master_admin/master_dashboard');
+        $studentModel = new StudentModel();
+        // Count all students where the 'instructor_id' matches
+        $data['student_count'] = $studentModel
+            ->countAllResults();
+
+        return view('master_admin/master_dashboard',$data);
     }
 
     public function students()

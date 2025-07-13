@@ -33,6 +33,12 @@
                         <span>Students</span>
                     </a>
                 </li>
+                <li class="sidebar-item">
+                    <a href="/instructor/profile" class='sidebar-link'>
+                        <i class="bi bi-person-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
 
                 <li class="sidebar-item">
                     <a href="<?= site_url('logout') ?>" class='sidebar-link'>

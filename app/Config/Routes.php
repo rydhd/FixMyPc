@@ -42,6 +42,7 @@ $routes->group('instructor', ['filter' => 'session'], function($routes) {
 
     // ✅ ADD THIS LINE FOR THE DELETE ALL ACTION
     $routes->post('students/delete-all', 'InstructorController::deleteAllStudents');
+    $routes->post('students/add', 'InstructorController::addStudent');
 
 });
 

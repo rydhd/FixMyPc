@@ -28,8 +28,12 @@
                                     <img src="<?= base_url('assets/static/images/faces/2.jpg') ?>" alt="Avatar">
                                 </div>
 
-                                <h3 class="mt-3"><?= esc(($instructor['first_name'] ?? 'New') . ' ' . ($instructor['last_name'] ?? 'Instructor')) ?></h3>
-                                <p class="text-small"><?= esc(($instructor['grade_level'] ?? '') . ' ' . ($instructor['section'] ?? '')) ?></p>
+                                <h3 class="mt-3">
+                                    <strong>Full Name:</strong> <?= esc(($instructor['first_name'] ?? 'New') . ' ' . ($instructor['last_name'] ?? 'Instructor')) ?>
+                                </h3>
+                                <p class="text-small">
+                                    <strong>Grade Level:</strong> <?= esc($instructor['grade_level'] ?? '') ?>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -69,10 +73,6 @@
                                 <div class="form-group">
                                     <label for="grade_level" class="form-label">Grade Level</label>
                                     <input type="text" name="grade_level" id="grade_level" class="form-control" placeholder="e.g., Grade 10" value="<?= old('grade_level', $instructor['grade_level'] ?? '') ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="section" class="form-label">Section</label>
-                                    <input type="text" name="section" id="section" class="form-control" placeholder="e.g., Section A" value="<?= old('section', $instructor['section'] ?? '') ?>">
                                 </div>
 
                                 <div class="form-group">

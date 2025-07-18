@@ -4,14 +4,19 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="buttons">
-            <button type="button" class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#uploadClassListModal">
-                + Class List
+            <button type="button" class="btn icon icon-left btn-primary" data-bs-toggle="modal" data-bs-target="#uploadClassListModal">
+                <i class="bi bi-plus-lg"></i>
+                Add Class
+            </button>
+            <button type="button" class="btn icon icon-left btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                <i data-feather="user-plus"></i> Add Student
             </button>
         </div>
+
         <div class="buttons">
             <form action="<?= site_url('instructor/students/delete-all') ?>" method="post" onsubmit="return confirm('DANGER: Are you absolutely sure you want to delete ALL of your students? This action is permanent and cannot be undone.');" style="display: inline;">
                 <?= csrf_field() ?>
-                <button type="submit" class="btn btn-danger rounded-pill">
+                <button type="submit" class="btn icon icon-left btn-danger">
                     <i class="bi bi-trash-fill"></i> Delete All Students
                 </button>
             </form>
@@ -101,6 +106,81 @@
         </div>
     </div>
 
+    <div class="modal fade text-left" id="addStudentModal" tabindex="-1" role="dialog"
+         aria-labelledby="addStudentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+             role="document"> <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="addStudentModalLabel">Add New Student</h4>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <i data-feather="x"></i>
+                    </button>
+                </div>
+                <form action="<?= site_url('instructor/students/add') ?>" method="post" id="addStudentForm">
+                    <?= csrf_field() ?>
+                    <div class="modal-body">
+                        <p>Enter the details for the new student.</p>
+
+                        <?php if (session()->getFlashdata('add_student_error')): ?>
+                            <div class="alert alert-danger">
+                                <?= session()->getFlashdata('add_student_error') ?>
+                                <?php if (session()->getFlashdata('add_student_validation_errors')): ?>
+                                    <ul class="mt-2 mb-0">
+                                        <?php foreach (session()->getFlashdata('add_student_validation_errors') as $error): ?>
+                                            <li><?= esc($error) ?></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (session()->getFlashdata('add_student_message')): ?>
+                            <div class="alert alert-success"><?= session()->getFlashdata('add_student_message') ?></div>
+                        <?php endif; ?>
+
+                        <label for="add_first_name">First Name: </label>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="add_first_name" name="first_name" value="<?= old('first_name') ?>" placeholder="First Name" required>
+                        </div>
+                        <label for="add_middle_name">Middle Name (Optional): </label>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="add_middle_name" name="middle_name" value="<?= old('middle_name') ?>" placeholder="Middle Name">
+                        </div>
+                        <label for="add_last_name">Last Name: </label>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="add_last_name" name="last_name" value="<?= old('last_name') ?>" placeholder="Last Name" required>
+                        </div>
+                        <label for="add_section">Section: </label>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="add_section" name="section" value="<?= old('section') ?>" placeholder="Section" required>
+                        </div>
+                        <label for="add_grade_level">Grade Level: </label>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="add_grade_level" name="grade_level" value="<?= old('grade_level') ?>" placeholder="Grade Level" required>
+                        </div>
+                        <label for="add_password">Password: </label>
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="add_password" name="password" placeholder="Password">
+                        </div>
+                        <label for="add_password_confirm">Confirm Password: </label>
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="add_password_confirm" name="password_confirm" placeholder="Confirm Password">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+                            <i class="bx bx-x d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Close</span>
+                        </button>
+                        <button type="submit" form="addStudentForm" class="btn btn-primary ms-1">
+                            <i class="bx bx-check d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Add Student</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 <?= $this->endSection() ?>
 
 <?= $this->section('styles') ?>
@@ -120,6 +200,14 @@
                 keyboard: false
             });
             errorModal.show();
+            <?php endif; ?>
+
+            // Script to automatically open the 'Add Student' modal if there were validation errors for it
+            <?php if (session()->getFlashdata('add_student_error')): ?>
+            var addStudentModal = new bootstrap.Modal(document.getElementById('addStudentModal'), {
+                keyboard: false
+            });
+            addStudentModal.show();
             <?php endif; ?>
         });
     </script>

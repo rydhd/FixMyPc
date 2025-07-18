@@ -31,17 +31,14 @@ class InstructorController extends BaseController
     {
 
         $instructorModel = new InstructorModel();
-        $accessCodeModel = new AccessCodeModel(); // ✅ Add this line
+        $accessCodeModel = new AccessCodeModel();
         $userId = auth()->id();
 
         // Find the instructor profile linked to the logged-in user
         $data['instructor'] = $instructorModel->where('user_id', $userId)->first();
 
-        // ✅ Fetch the access code from the `access_codes` table where `used_by` matches the user's ID
+        // Fetch the access code from the `access_codes` table where `used_by` matches the user's ID
         $data['access_code'] = $accessCodeModel->where('used_by', $userId)->first();
-
-        // We no longer need the full user object for this
-        // $data['user'] = auth()->user();
 
         return view('instructor/profile', $data);
     }
@@ -50,18 +47,25 @@ class InstructorController extends BaseController
         $instructorModel = new InstructorModel();
         $userId = auth()->id();
 
-        // 1. Define Validation Rules
+        // Find the existing instructor profile to get its ID. This is still useful
+        // to determine if we are updating or creating.
+        $existingInstructor = $instructorModel->where('user_id', $userId)->first();
+
+        // 1. Define Validation Rules (simplified as code validation is now in model)
         $rules = [
             'first_name' => 'required|alpha_space|max_length[100]',
             'last_name'  => 'required|alpha_space|max_length[100]',
             'middle_name'=> 'permit_empty|alpha_space|max_length[100]',
             'grade_level'=> 'permit_empty|string|max_length[50]',
-            'section'    => 'permit_empty|string|max_length[50]',
-            'code'       => 'permit_empty|alpha_numeric_punct|max_length[50]',
-            // ✅ Add password validation rules
+            // 'code' validation is now handled in the InstructorModel
             'password'   => 'permit_empty|strong_password',
             'password_confirm' => 'matches[password]',
         ];
+
+        // If you still want client-side validation or basic validation here,
+        // you can keep a simpler rule for 'code' like 'permit_empty|alpha_numeric_punct|max_length[50]',
+        // but the 'is_unique' part will be handled by the model.
+        // Or remove 'code' from here entirely if the model handles it sufficiently.
 
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
@@ -70,31 +74,32 @@ class InstructorController extends BaseController
         // 2. Get validated data
         $postData = $this->validator->getValidated();
 
-        // ✅ START: Password Update Logic
-        // If a new password was provided, update the user's credentials
+        // START: Password Update Logic
         if (!empty($postData['password'])) {
             $users = new UserModel();
             $user = auth()->user();
 
-            // The `fill` method will trigger the Shield mutator to hash the password
             $user->fill(['password' => $postData['password']]);
             $users->save($user);
         }
-        // ✅ END: Password Update Logic
-
-        // 3. Find if a profile already exists
-        $existingInstructor = $instructorModel->where('user_id', $userId)->first();
+        // END: Password Update Logic
 
         // Remove password fields so they aren't saved to the instructor profile
         unset($postData['password'], $postData['password_confirm']);
 
         if ($existingInstructor) {
             // UPDATE existing profile
-            $instructorModel->update($existingInstructor['id'], $postData);
+            // The model's validation rules will be applied here automatically
+            if (!$instructorModel->update($existingInstructor['id'], $postData)) {
+                return redirect()->back()->withInput()->with('errors', $instructorModel->errors());
+            }
         } else {
             // CREATE new profile, adding the user_id
             $postData['user_id'] = $userId;
-            $instructorModel->save($postData);
+            // The model's validation rules will be applied here automatically
+            if (!$instructorModel->save($postData)) {
+                return redirect()->back()->withInput()->with('errors', $instructorModel->errors());
+            }
         }
 
         return redirect()->to('instructor/profile')->with('message', 'Profile updated successfully!');
@@ -116,6 +121,75 @@ class InstructorController extends BaseController
 
         return view('instructor/students', $data);
     }
+
+    /**
+     * Handles the addition of a single student via modal form.
+     */
+    public function addStudent()
+    {
+        $studentModel = new StudentModel();
+        $instructorStudentModel = new InstructorStudentModel();
+        $instructorId = auth()->id();
+
+        // Ensure the instructor is logged in
+        if (!$instructorId) {
+            return redirect()->to('/login')->with('error', 'You must be logged in to perform this action.');
+        }
+
+        // Define validation rules for individual student addition
+        $rules = [
+            'first_name'       => 'required|alpha_space|max_length[150]',
+            'middle_name'      => 'permit_empty|alpha_space|max_length[150]',
+            'last_name'        => 'required|alpha_space|max_length[150]',
+            'section'          => 'required|string|max_length[100]',
+            'grade_level'      => 'required|string|max_length[50]',
+            'password'         => 'permit_empty|min_length[8]',
+            'password_confirm' => 'matches[password]',
+        ];
+
+        if (!$this->validate($rules)) {
+            // If validation fails, redirect back with input and errors
+            return redirect()->back()
+                ->withInput()
+                ->with('add_student_error', 'Please correct the errors below.')
+                ->with('add_student_validation_errors', $this->validator->getErrors());
+        }
+
+        // Get validated data
+        $postData = $this->validator->getValidated();
+
+        // Hash password if provided
+        if (!empty($postData['password'])) {
+            $postData['password'] = password_hash($postData['password'], PASSWORD_DEFAULT);
+        } else {
+            // Remove password field if empty to prevent saving an empty password
+            unset($postData['password']);
+        }
+
+        // Remove password_confirm as it's not a database field
+        unset($postData['password_confirm']);
+
+        // Save the student
+        if ($studentModel->save($postData)) {
+            $studentId = $studentModel->getInsertID();
+
+            // Link the new student to the current instructor
+            $instructorStudentModel->save([
+                'instructor_id' => $instructorId,
+                'student_id'    => $studentId
+            ]);
+
+            return redirect()->to('/instructor/students')->with('add_student_message', 'Student added successfully!');
+        } else {
+            // This case should ideally be caught by the model's validation
+            // but is here as a fallback for database-level errors
+            return redirect()->back()
+                ->withInput()
+                ->with('add_student_error', 'Could not add student. Please try again.')
+                ->with('add_student_validation_errors', $studentModel->errors());
+        }
+    }
+
 
     /**
      * Displays the form to edit a specific student's details.
@@ -179,11 +253,9 @@ class InstructorController extends BaseController
             unset($postData['password']);
         }
 
-        // ✅ ADD THIS LINE:
         // This manually builds the validation rule, forcing it to ignore the current student's ID.
+        // This is still correct for students.
         $studentModel->setValidationRule('code', "required|alpha_numeric_punct|max_length[100]|is_unique[students.code,id,{$studentId}]");
-
-        // Validation rules can be added here if needed
 
         // Update the student in the database
         if ($studentModel->update($studentId, $postData)) {
@@ -198,7 +270,6 @@ class InstructorController extends BaseController
      */
     public function uploadClasslist()
     {
-        // ... (The rest of your uploadClasslist function remains the same)
         // Validate the uploaded file
         $file = $this->request->getFile('classlist_file');
 

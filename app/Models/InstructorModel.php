@@ -13,12 +13,23 @@ class InstructorModel extends Model
         'last_name',
         'first_name',
         'middle_name',
-        'section',
         'grade_level',
         'code',
-        'user_id' // 👈 Make sure user_id is in allowedFields
+        'user_id'
     ];
     protected $useTimestamps = true;
+
+    // Add validation rules directly in the model
+    protected $validationRules = [
+        'first_name'  => 'required|alpha_space|max_length[100]',
+        'last_name'   => 'required|alpha_space|max_length[100]',
+        'middle_name' => 'permit_empty|alpha_space|max_length[100]',
+        'grade_level' => 'permit_empty|string|max_length[50]',
+        'code'        => 'permit_empty|alpha_numeric_punct|max_length[50]|is_unique[instructors.code,id,{id}]', // Make sure permit_empty is here and adjust unique rule
+    ];
+
+    protected $validationMessages = [];
+    protected $skipValidation = false; // Set to true if you want to skip model validation sometimes
 
     /**
      * Joins the instructors table with the users table to get combined details.

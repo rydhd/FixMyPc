@@ -12,12 +12,12 @@ $routes->get('/', 'Home::index');
 
 // Your custom routes should come FIRST
 // This tells the app to use your controller for login and logout
-$routes->get('login', 'LoginController::loginView');
+$routes->get('login', 'LoginController::loginView', ['filter' => 'guest']);
 $routes->post('login', 'LoginController::loginAction');
 $routes->get('logout', 'LoginController::logoutAction');
 
 // Registration
-$routes->get('register', 'RegisterController::registerView');
+$routes->get('register', 'RegisterController::registerView', ['filter' => 'guest']);
 $routes->post('register', 'RegisterController::registerAction');
 
 
@@ -25,7 +25,7 @@ $routes->post('register', 'RegisterController::registerAction');
 // Grouping routes that require a logged-in session.
 $routes->group('instructor', ['filter' => 'session'], function($routes) {
     // Corresponds to 'dashboard'
-    $routes->get('dashboard', 'InstructorController::dashboard',['as' => 'dashboard']);
+    $routes->get('dashboard', 'InstructorController::dashboard',['as' => 'instructor_dashboard']);
 
     $routes->get('students', 'InstructorController::students', ['as' => 'students']);
     $routes->get('profile', 'InstructorController::profile', ['as' => 'profile']);

@@ -29,18 +29,15 @@ class AccessTokens implements AuthenticatorInterface
 {
     public const ID_TYPE_ACCESS_TOKEN = 'access_token';
 
-    /**
-     * The persistence engine
-     */
-    protected UserModel $provider;
-
     protected ?User $user = null;
     protected TokenLoginModel $loginModel;
 
-    public function __construct(UserModel $provider)
-    {
-        $this->provider = $provider;
-
+    /**
+     * @param UserModel $provider The persistence engine
+     */
+    public function __construct(
+        protected UserModel $provider,
+    ) {
         $this->loginModel = model(TokenLoginModel::class);
     }
 
@@ -70,7 +67,7 @@ class AccessTokens implements AuthenticatorInterface
                     $credentials['token'] ?? '',
                     false,
                     $ipAddress,
-                    $userAgent
+                    $userAgent,
                 );
             }
 
@@ -89,7 +86,7 @@ class AccessTokens implements AuthenticatorInterface
                     false,
                     $ipAddress,
                     $userAgent,
-                    $user->id
+                    $user->id,
                 );
             }
 
@@ -113,7 +110,7 @@ class AccessTokens implements AuthenticatorInterface
                 true,
                 $ipAddress,
                 $userAgent,
-                $this->user->id
+                $this->user->id,
             );
         }
 
@@ -134,13 +131,13 @@ class AccessTokens implements AuthenticatorInterface
                 'success' => false,
                 'reason'  => lang(
                     'Auth.noToken',
-                    [config('AuthToken')->authenticatorHeader['tokens']]
+                    [config('AuthToken')->authenticatorHeader['tokens']],
                 ),
             ]);
         }
 
-        if (strpos($credentials['token'], 'Bearer') === 0) {
-            $credentials['token'] = trim(substr($credentials['token'], 6));
+        if (str_starts_with((string) $credentials['token'], 'Bearer')) {
+            $credentials['token'] = trim(substr((string) $credentials['token'], 6));
         }
 
         /** @var UserIdentityModel $identityModel */
@@ -157,11 +154,24 @@ class AccessTokens implements AuthenticatorInterface
 
         assert($token->last_used_at instanceof Time || $token->last_used_at === null);
 
+        // Is expired ?
+        if (
+            $token->expires instanceof Time
+            && $token->expires->isBefore(
+                Time::now(),
+            )
+        ) {
+            return new Result([
+                'success' => false,
+                'reason'  => lang('Auth.oldToken'),
+            ]);
+        }
+
         // Hasn't been used in a long time
         if (
             $token->last_used_at
             && $token->last_used_at->isBefore(
-                Time::now()->subSeconds(config('AuthToken')->unusedTokenLifetime)
+                Time::now()->subSeconds(config('AuthToken')->unusedTokenLifetime),
             )
         ) {
             return new Result([
@@ -202,7 +212,7 @@ class AccessTokens implements AuthenticatorInterface
 
         return $this->attempt([
             'token' => $request->getHeaderLine(
-                config('AuthToken')->authenticatorHeader['tokens']
+                config('AuthToken')->authenticatorHeader['tokens'],
             ),
         ])->isOK();
     }
@@ -231,7 +241,7 @@ class AccessTokens implements AuthenticatorInterface
         }
 
         $user->setAccessToken(
-            $user->getAccessToken($this->getBearerToken())
+            $user->getAccessToken($this->getBearerToken()),
         );
 
         $this->login($user);
@@ -277,7 +287,7 @@ class AccessTokens implements AuthenticatorInterface
     {
         if (! $this->user instanceof User) {
             throw new InvalidArgumentException(
-                __METHOD__ . '() requires logged in user before calling.'
+                __METHOD__ . '() requires logged in user before calling.',
             );
         }
 

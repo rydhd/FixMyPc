@@ -36,6 +36,10 @@ public array $permissions = [
 ];
 ```
 
+!!! note
+
+    Permissions should be written in lowercase letters. Some functions automatically convert the given permission parameter to lowercase letters, and using uppercase letters may cause compatibility problems.
+    
 ### Assign Permissions to a Group
 
 Each group can have its own specific set of permissions. These are defined in `Config\AuthGroups::$matrix`. You can specify each permission by it's full name, or using the context and an asterisk (*) to specify all permissions within that context.

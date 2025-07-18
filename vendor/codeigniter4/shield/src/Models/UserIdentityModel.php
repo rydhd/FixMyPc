@@ -26,6 +26,7 @@ use CodeIgniter\Shield\Exceptions\LogicException;
 use CodeIgniter\Shield\Exceptions\ValidationException;
 use Exception;
 use Faker\Generator;
+use InvalidArgumentException;
 use ReflectionException;
 
 class UserIdentityModel extends BaseModel
@@ -96,7 +97,7 @@ class UserIdentityModel extends BaseModel
     {
         if ($user->id === null) {
             throw new LogicException(
-                '"$user->id" is null. You should not use the incomplete User object.'
+                '"$user->id" is null. You should not use the incomplete User object.',
             );
         }
     }
@@ -104,15 +105,15 @@ class UserIdentityModel extends BaseModel
     /**
      * Create an identity with 6 digits code for auth action
      *
-     * @phpstan-param array{type: string, name: string, extra: string} $data
-     * @param         callable                                         $codeGenerator generate secret code
+     * @param array{type: string, name: string, extra: string} $data
+     * @param callable                                         $codeGenerator generate secret code
      *
      * @return string secret
      */
     public function createCodeIdentity(
         User $user,
         array $data,
-        callable $codeGenerator
+        callable $codeGenerator,
     ): string {
         $this->checkUserId($user);
 
@@ -144,10 +145,13 @@ class UserIdentityModel extends BaseModel
     /**
      * Generates a new personal access token for the user.
      *
-     * @param string       $name   Token name
-     * @param list<string> $scopes Permissions the token grants
+     * @param string       $name      Token name
+     * @param list<string> $scopes    Permissions the token grants
+     * @param Time         $expiresAt Expiration date
+     *
+     * @throws InvalidArgumentException
      */
-    public function generateAccessToken(User $user, string $name, array $scopes = ['*']): AccessToken
+    public function generateAccessToken(User $user, string $name, array $scopes = ['*'], ?Time $expiresAt = null): AccessToken
     {
         $this->checkUserId($user);
 
@@ -158,6 +162,7 @@ class UserIdentityModel extends BaseModel
             'user_id' => $user->id,
             'name'    => $name,
             'secret'  => hash('sha256', $rawToken = random_string('crypto', 64)),
+            'expires' => $expiresAt,
             'extra'   => serialize($scopes),
         ]);
 
@@ -224,6 +229,24 @@ class UserIdentityModel extends BaseModel
             ->findAll();
     }
 
+    /**
+     * Updates or sets expiration date of users' AccessToken or HMAC Token by ID.
+     *
+     * @param Time  $expiresAt Expiration date
+     * @param mixed $id
+     *
+     * @return bool Returns true if expiration date was set or updated.
+     */
+    public function setIdentityExpirationById($id, User $user, ?Time $expiresAt = null): bool
+    {
+        $this->checkUserId($user);
+
+        return $this->where('user_id', $user->id)
+            ->where('id', $id)
+            ->set(['expires' => $expiresAt])
+            ->update();
+    }
+
     // HMAC
     /**
      * Find and Retrieve the HMAC AccessToken based on Token alone
@@ -242,13 +265,15 @@ class UserIdentityModel extends BaseModel
     /**
      * Generates a new personal access token for the user.
      *
-     * @param string       $name   Token name
-     * @param list<string> $scopes Permissions the token grants
+     * @param string       $name      Token name
+     * @param list<string> $scopes    Permissions the token grants
+     * @param Time         $expiresAt Expiration date
      *
      * @throws Exception
+     * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    public function generateHmacToken(User $user, string $name, array $scopes = ['*']): AccessToken
+    public function generateHmacToken(User $user, string $name, array $scopes = ['*'], ?Time $expiresAt = null): AccessToken
     {
         $this->checkUserId($user);
 
@@ -262,6 +287,7 @@ class UserIdentityModel extends BaseModel
             'name'    => $name,
             'secret'  => bin2hex(random_bytes(16)), // Key
             'secret2' => $secretKey,
+            'expires' => $expiresAt,
             'extra'   => serialize($scopes),
         ]);
 

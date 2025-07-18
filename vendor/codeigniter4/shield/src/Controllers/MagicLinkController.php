@@ -92,7 +92,7 @@ class MagicLinkController extends BaseController
         $user  = $this->provider->findByCredentials(['email' => $email]);
 
         if ($user === null) {
-            return redirect()->route('magic-link')->with('error', lang('Auth.invalidEmail'));
+            return redirect()->route('magic-link')->with('error', lang('Auth.invalidEmail', [$email]));
         }
 
         /** @var UserIdentityModel $identityModel */
@@ -127,8 +127,8 @@ class MagicLinkController extends BaseController
         $email->setSubject(lang('Auth.magicLinkSubject'));
         $email->setMessage($this->view(
             setting('Auth.views')['magic-link-email'],
-            ['token' => $token, 'ipAddress' => $ipAddress, 'userAgent' => $userAgent, 'date' => $date],
-            ['debug' => false]
+            ['token' => $token, 'user' => $user, 'ipAddress' => $ipAddress, 'userAgent' => $userAgent, 'date' => $date],
+            ['debug' => false],
         ));
 
         if ($email->send(false) === false) {
@@ -223,7 +223,7 @@ class MagicLinkController extends BaseController
     private function recordLoginAttempt(
         string $identifier,
         bool $success,
-        $userId = null
+        $userId = null,
     ): void {
         /** @var LoginModel $loginModel */
         $loginModel = model(LoginModel::class);
@@ -234,7 +234,7 @@ class MagicLinkController extends BaseController
             $success,
             $this->request->getIPAddress(),
             (string) $this->request->getUserAgent(),
-            $userId
+            $userId,
         );
     }
 

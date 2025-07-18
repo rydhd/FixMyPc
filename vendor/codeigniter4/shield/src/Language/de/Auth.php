@@ -25,7 +25,7 @@ return [
     'badToken'              => 'Das Zugriffstoken ist ungültig.',
     'oldToken'              => 'Das Zugriffstoken ist abgelaufen.',
     'noUserEntity'          => 'Die Benutzerentität muss für die Passwortüberprüfung angegeben werden.',
-    'invalidEmail'          => 'Es konnte nicht überprüft werden, ob die E-Mail-Adresse mit der gespeicherten übereinstimmt.',
+    'invalidEmail'          => 'Es konnte kein Benutzer mit der E-Mail "{0}" gefunden werden.',
     'unableSendEmailToUser' => 'Leider gab es ein Problem beim Senden der E-Mail. Wir konnten keine E-Mail an "{0}" senden.',
     'throttled'             => 'Es wurden zu viele Anfragen von dieser IP-Adresse gestellt. Sie können es in {0} Sekunden erneut versuchen.',
     'notEnoughPrivilege'    => 'Sie haben nicht die erforderliche Berechtigung, um den gewünschten Vorgang auszuführen.',

@@ -1,3 +1,9 @@
+<?php
+
+use CodeIgniter\Shield\Entities\User;
+
+?>
+
 <?= $this->extend(config('Auth')->views['layout']) ?>
 
 <?= $this->section('title') ?><?= lang('Auth.email2FATitle') ?> <?= $this->endSection() ?>
@@ -12,7 +18,7 @@
             <p><?= lang('Auth.confirmEmailAddress') ?></p>
 
             <?php if (session('error')) : ?>
-                <div class="alert alert-danger"><?= session('error') ?></div>
+                <div class="alert alert-danger"><?= esc(session('error')) ?></div>
             <?php endif ?>
 
             <form action="<?= url_to('auth-action-handle') ?>" method="post">
@@ -22,7 +28,7 @@
                 <div class="mb-2">
                     <input type="email" class="form-control" name="email"
                         inputmode="email" autocomplete="email" placeholder="<?= lang('Auth.email') ?>"
-                        <?php /** @var CodeIgniter\Shield\Entities\User $user */ ?>
+                        <?php /** @var User $user */ ?>
                         value="<?= old('email', $user->email) ?>" required>
                 </div>
 

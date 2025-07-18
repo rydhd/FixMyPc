@@ -39,12 +39,12 @@ class RegisterController extends BaseController
     public function initController(
         RequestInterface $request,
         ResponseInterface $response,
-        LoggerInterface $logger
+        LoggerInterface $logger,
     ): void {
         parent::initController(
             $request,
             $response,
-            $logger
+            $logger,
         );
     }
 
@@ -103,8 +103,7 @@ class RegisterController extends BaseController
 
         // Save the user
         $allowedPostFields = array_keys($rules);
-        $user              = $this->getUserEntity();
-        $user->fill($this->request->getPost($allowedPostFields));
+        $user              = $users->createNewUser($this->request->getPost($allowedPostFields));
 
         // Workaround for email only registration/login
         if ($user->username === null) {
@@ -113,7 +112,7 @@ class RegisterController extends BaseController
 
         try {
             $users->save($user);
-        } catch (ValidationException $e) {
+        } catch (ValidationException) {
             return redirect()->back()->withInput()->with('errors', $users->errors());
         }
 
@@ -160,10 +159,14 @@ class RegisterController extends BaseController
 
     /**
      * Returns the Entity class that should be used
+     *
+     * @deprecated 1.2.0 No longer used.
      */
     protected function getUserEntity(): User
     {
-        return new User();
+        $userProvider = $this->getUserProvider();
+
+        return $userProvider->createNewUser();
     }
 
     /**

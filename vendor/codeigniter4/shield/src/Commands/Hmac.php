@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace CodeIgniter\Shield\Commands;
 
+use CodeIgniter\I18n\Time;
 use CodeIgniter\Shield\Authentication\HMAC\HmacEncrypter;
 use CodeIgniter\Shield\Commands\Exceptions\BadInputException;
 use CodeIgniter\Shield\Exceptions\RuntimeException;
@@ -46,9 +47,11 @@ class Hmac extends BaseCommand
             shield:hmac reencrypt
             shield:hmac encrypt
             shield:hmac decrypt
+            shield:hmac invalidateAll
 
             The reencrypt command should be used when rotating the encryption keys.
             The encrypt command should only be run on existing raw secret keys (extremely rare).
+            The invalidateAll command should only be run if you need to invalidate ALL HMAC Tokens (for everyone).
         EOL;
 
     /**
@@ -61,6 +64,7 @@ class Hmac extends BaseCommand
                 reencrypt: Re-encrypts all HMAC Secret Keys on encryption key rotation
                 encrypt: Encrypt all raw HMAC Secret Keys
                 decrypt: Decrypt all encrypted HMAC Secret Keys
+                invalidateAll: Invalidates all HMAC Keys/Tokens (for everyone)
             EOL,
     ];
 
@@ -86,22 +90,14 @@ class Hmac extends BaseCommand
         $this->encrypter = new HmacEncrypter();
 
         try {
-            switch ($action) {
-                case 'encrypt':
-                    $this->encrypt();
-                    break;
+            match ($action) {
+                'encrypt'       => $this->encrypt(),
+                'decrypt'       => $this->decrypt(),
+                'reencrypt'     => $this->reEncrypt(),
+                'invalidateAll' => $this->invalidateAll(),
 
-                case 'decrypt':
-                    $this->decrypt();
-                    break;
-
-                case 'reencrypt':
-                    $this->reEncrypt();
-                    break;
-
-                default:
-                    throw new BadInputException('Unrecognized Command');
-            }
+                default => throw new BadInputException('Unrecognized Command'),
+            };
         } catch (Exception $e) {
             $this->write($e->getMessage(), 'red');
 
@@ -141,7 +137,7 @@ class Hmac extends BaseCommand
                 } catch (RuntimeException $e) {
                     $that->error('id: ' . $identity->id . ', ' . $e->getMessage());
                 }
-            }
+            },
         );
     }
 
@@ -171,7 +167,7 @@ class Hmac extends BaseCommand
                 $uIdModelSub->save($identity);
 
                 $that->write('id: ' . $identity->id . ', decrypted.');
-            }
+            },
         );
     }
 
@@ -203,7 +199,34 @@ class Hmac extends BaseCommand
                 $uIdModelSub->save($identity);
 
                 $that->write('id: ' . $identity->id . ', Re-encrypted.');
-            }
+            },
+        );
+    }
+
+    /**
+     * Invalidates all HMAC Keys/Tokens for every user.
+     */
+    public function invalidateAll(): void
+    {
+        $uIdModel    = new UserIdentityModel();
+        $uIdModelSub = new UserIdentityModel();
+
+        $uIdModel->where('type', 'hmac_sha256')->orderBy('id')->chunk(
+            100,
+            function ($identity) use ($uIdModelSub): void {
+                $timeNow = Time::now();
+
+                if (null !== $identity->expires && $identity->expires->isBefore($timeNow)) {
+                    $this->write('HMAC Token ID: ' . $identity->id . ', already expired, skipped.');
+
+                    return;
+                }
+
+                $identity->expires = $timeNow;
+                $uIdModelSub->save($identity);
+
+                $this->write('HMAC Token ID: ' . $identity->id . ', set as expired.');
+            },
         );
     }
 }

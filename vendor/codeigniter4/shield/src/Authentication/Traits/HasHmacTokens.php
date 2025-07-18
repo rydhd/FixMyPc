@@ -13,8 +13,10 @@ declare(strict_types=1);
 
 namespace CodeIgniter\Shield\Authentication\Traits;
 
+use CodeIgniter\I18n\Time;
 use CodeIgniter\Shield\Entities\AccessToken;
 use CodeIgniter\Shield\Models\UserIdentityModel;
+use InvalidArgumentException;
 use ReflectionException;
 
 /**
@@ -35,17 +37,19 @@ trait HasHmacTokens
     /**
      * Generates a new personal HMAC token for this user.
      *
-     * @param string       $name   Token name
-     * @param list<string> $scopes Permissions the token grants
+     * @param string       $name      Token name
+     * @param list<string> $scopes    Permissions the token grants
+     * @param Time|null    $expiresAt Expiration date
      *
+     * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    public function generateHmacToken(string $name, array $scopes = ['*']): AccessToken
+    public function generateHmacToken(string $name, array $scopes = ['*'], ?Time $expiresAt = null): AccessToken
     {
         /** @var UserIdentityModel $identityModel */
         $identityModel = model(UserIdentityModel::class);
 
-        return $identityModel->generateHmacToken($this, $name, $scopes);
+        return $identityModel->generateHmacToken($this, $name, $scopes, $expiresAt);
     }
 
     /**
@@ -155,5 +159,64 @@ trait HasHmacTokens
         $this->currentHmacToken = $accessToken;
 
         return $this;
+    }
+
+    /**
+     * Checks if the provided HMAC Token is expired.
+     */
+    public function isHmacTokenExpired(AccessToken $hmacToken): bool
+    {
+        return $hmacToken->expires instanceof Time && $hmacToken->expires->isBefore(Time::now());
+    }
+
+    /**
+     * Sets an expiration for HMAC token by ID.
+     *
+     * @param int  $id        HMAC Token ID
+     * @param Time $expiresAt Expiration date
+     *
+     * @return bool Returns true if expiration date is set or updated.
+     */
+    public function updateHmacTokenExpiration(int $id, Time $expiresAt): bool
+    {
+        /** @var UserIdentityModel $identityModel */
+        $identityModel = model(UserIdentityModel::class);
+        $result        = $identityModel->setIdentityExpirationById($id, $this, $expiresAt);
+
+        if ($result) {
+            // refresh currentHmacToken with updated data
+            $this->currentHmacToken = $identityModel->getHmacTokenById($id, $this);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Removes the expiration date for HMAC token by ID.
+     *
+     * @param int $id HMAC Token ID
+     *
+     * @return bool Returns true if expiration date is removed
+     */
+    public function removeHmacTokenExpiration(int $id): bool
+    {
+        /** @var UserIdentityModel $identityModel */
+        $identityModel = model(UserIdentityModel::class);
+        $result        = $identityModel->setIdentityExpirationById($id, $this);
+
+        if ($result) {
+            // refresh currentHmacToken with updated data
+            $this->currentHmacToken = $identityModel->getHmacTokenById($id, $this);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Checks if the current HMAC token has a set expiration date
+     */
+    public function canHmacTokenExpire(AccessToken $hmacToken): bool
+    {
+        return $hmacToken->expires !== null;
     }
 }

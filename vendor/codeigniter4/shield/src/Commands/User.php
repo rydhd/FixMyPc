@@ -19,6 +19,7 @@ use CodeIgniter\Shield\Commands\Exceptions\CancelException;
 use CodeIgniter\Shield\Config\Auth;
 use CodeIgniter\Shield\Entities\User as UserEntity;
 use CodeIgniter\Shield\Exceptions\UserNotFoundException;
+use CodeIgniter\Shield\Models\GroupModel;
 use CodeIgniter\Shield\Models\UserModel;
 use CodeIgniter\Shield\Validation\ValidationRules;
 use Config\Services;
@@ -53,6 +54,7 @@ class User extends BaseCommand
         shield:user <action> options
 
             shield:user create -n newusername -e newuser@example.com
+            shield:user create -n newusername -e newuser@example.com -g mygroup
 
             shield:user activate -n username
             shield:user activate -e user@example.com
@@ -143,7 +145,7 @@ class User extends BaseCommand
         if ($action === null || ! in_array($action, $this->validActions, true)) {
             $this->write(
                 'Specify a valid action: ' . implode(',', $this->validActions),
-                'red'
+                'red',
             );
 
             return EXIT_ERROR;
@@ -159,7 +161,7 @@ class User extends BaseCommand
         try {
             switch ($action) {
                 case 'create':
-                    $this->create($username, $email);
+                    $this->create($username, $email, $group);
                     break;
 
                 case 'activate':
@@ -252,8 +254,9 @@ class User extends BaseCommand
      *
      * @param string|null $username User name to create (optional)
      * @param string|null $email    User email to create (optional)
+     * @param string|null $group    Group to add user to (optional)
      */
-    private function create(?string $username = null, ?string $email = null): void
+    private function create(?string $username = null, ?string $email = null, ?string $group = null): void
     {
         $data = [];
 
@@ -274,12 +277,12 @@ class User extends BaseCommand
         $password = $this->prompt(
             'Password',
             null,
-            $this->validationRules['password']['rules']
+            $this->validationRules['password']['rules'],
         );
         $passwordConfirm = $this->prompt(
             'Password confirmation',
             null,
-            $this->validationRules['password']['rules']
+            $this->validationRules['password']['rules'],
         );
 
         if ($password !== $passwordConfirm) {
@@ -303,6 +306,11 @@ class User extends BaseCommand
 
         $user = new UserEntity($data);
 
+        // Validate the group
+        if ($group !== null && ! $this->validateGroup($group)) {
+            throw new CancelException('Invalid group: "' . $group . '"');
+        }
+
         if ($username === null) {
             $userModel->allowEmptyInserts()->save($user);
             $this->write('New User created', 'green');
@@ -310,6 +318,27 @@ class User extends BaseCommand
             $userModel->save($user);
             $this->write('User "' . $username . '" created', 'green');
         }
+
+        $user = $userModel->findById($userModel->getInsertID());
+
+        if ($group === null) {
+            // Add to default group
+            $userModel->addToDefaultGroup($user);
+
+            $this->write('The user is added to the default group.', 'green');
+        } else {
+            $user->addGroup($group);
+
+            $this->write('The user is added to group "' . $group . '".', 'green');
+        }
+    }
+
+    private function validateGroup(string $group): bool
+    {
+        /** @var GroupModel $groupModel */
+        $groupModel = model(GroupModel::class);
+
+        return $groupModel->isValidGroup($group);
     }
 
     /**
@@ -370,7 +399,7 @@ class User extends BaseCommand
     private function changename(
         ?string $username = null,
         ?string $email = null,
-        ?string $newUsername = null
+        ?string $newUsername = null,
     ): void {
         $user = $this->findUser('Change username', $username, $email);
 
@@ -411,7 +440,7 @@ class User extends BaseCommand
     private function changeemail(
         ?string $username = null,
         ?string $email = null,
-        ?string $newEmail = null
+        ?string $newEmail = null,
     ): void {
         $user = $this->findUser('Change email', $username, $email);
 
@@ -462,7 +491,7 @@ class User extends BaseCommand
 
         $confirm = $this->prompt(
             'Delete the user "' . $user->username . '" (' . $user->email . ') ?',
-            ['y', 'n']
+            ['y', 'n'],
         );
 
         if ($confirm === 'y') {
@@ -500,12 +529,12 @@ class User extends BaseCommand
             $password = $this->prompt(
                 'Password',
                 null,
-                $this->validationRules['password']['rules']
+                $this->validationRules['password']['rules'],
             );
             $passwordConfirm = $this->prompt(
                 'Password confirmation',
                 null,
-                $this->validationRules['password']['rules']
+                $this->validationRules['password']['rules'],
             );
 
             if ($password !== $passwordConfirm) {
@@ -537,7 +566,7 @@ class User extends BaseCommand
             ->join(
                 $this->tables['identities'],
                 $this->tables['users'] . '.id = ' . $this->tables['identities'] . '.user_id',
-                'LEFT'
+                'LEFT',
             )
             ->groupStart()
             ->where($this->tables['identities'] . '.type', Session::ID_TYPE_EMAIL_PASSWORD)
@@ -574,11 +603,16 @@ class User extends BaseCommand
             $group = $this->prompt('Group', null, 'required');
         }
 
+        // Validate the group
+        if (! $this->validateGroup($group)) {
+            throw new CancelException('Invalid group: "' . $group . '"');
+        }
+
         $user = $this->findUser('Add user to group', $username, $email);
 
         $confirm = $this->prompt(
             'Add the user "' . $user->username . '" to the group "' . $group . '" ?',
-            ['y', 'n']
+            ['y', 'n'],
         );
 
         if ($confirm === 'y') {
@@ -588,7 +622,7 @@ class User extends BaseCommand
         } else {
             $this->write(
                 'Addition of the user "' . $user->username . '" to the group "' . $group . '" cancelled',
-                'yellow'
+                'yellow',
             );
         }
     }
@@ -606,11 +640,16 @@ class User extends BaseCommand
             $group = $this->prompt('Group', null, 'required');
         }
 
+        // Validate the group
+        if (! $this->validateGroup($group)) {
+            throw new CancelException('Invalid group: "' . $group . '"');
+        }
+
         $user = $this->findUser('Remove user from group', $username, $email);
 
         $confirm = $this->prompt(
             'Remove the user "' . $user->username . '" from the group "' . $group . '" ?',
-            ['y', 'n']
+            ['y', 'n'],
         );
 
         if ($confirm === 'y') {
@@ -640,7 +679,7 @@ class User extends BaseCommand
                 $email = $this->prompt(
                     'Email',
                     null,
-                    'required'
+                    'required',
                 );
             }
         }
@@ -651,7 +690,7 @@ class User extends BaseCommand
             ->join(
                 $this->tables['identities'],
                 $this->tables['users'] . '.id = ' . $this->tables['identities'] . '.user_id',
-                'LEFT'
+                'LEFT',
             )
             ->groupStart()
             ->where($this->tables['identities'] . '.type', Session::ID_TYPE_EMAIL_PASSWORD)

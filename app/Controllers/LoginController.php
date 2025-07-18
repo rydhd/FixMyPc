@@ -8,56 +8,39 @@ use CodeIgniter\Shield\Controllers\LoginController as ShieldLoginController;
 class LoginController extends ShieldLoginController
 {
     /**
-     * Displays the login form.
-     * If the user is already logged in, they will be redirected.
+     * We no longer need the loginView() method here.
+     * The 'guest' filter in the routes file will handle redirecting
+     * logged-in users away from the login page.
      */
-    public function loginView(): string|RedirectResponse
-    {
-        if (auth()->loggedIn()) {
-            $user = auth()->user();
-
-            // Redirect based on group
-            if ($user->inGroup('masteradmin', 'superadmin')) {
-                return redirect()->route('master_dashboard');
-            }
-
-            if ($user->inGroup('instructor')) {
-                return redirect()->route('dashboard');
-            }
-
-            // Fallback for any other logged-in user
-            return redirect()->to(config('Auth')->loginRedirect());
-        }
-
-        return view(setting('Auth.views')['login']);
-    }
 
     /**
-     * Override the loginAction to redirect users based on their group.
+     * Handles the login form submission.
+     * Overridden to redirect users based on their group after a successful login.
      */
     public function loginAction(): RedirectResponse
     {
-        // Run the default login logic from Shield
-        // This handles validation, finding the user, and logging them in.
+        // Run the default login logic from Shield.
         $result = parent::loginAction();
 
-        // Check if the login was successful and it's a redirect response
-        if (auth()->loggedIn() && $result->hasHeader('Location')) {
+        // Check if the login was successful.
+        if (auth()->loggedIn()) {
             $user = auth()->user();
 
-            // Redirect masteradmin and superadmin to the master dashboard
+            // Redirect masteradmin and superadmin.
             if ($user->inGroup('masteradmin', 'superadmin')) {
                 return redirect()->route('master_dashboard')->withCookies();
             }
 
-            // Redirect instructors to their own dashboard
-            if ($user->inGroup('instructor')) {
-                // ✅ FIX: Changed 'instructor_dashboard' to 'dashboard' to match Routes.php
-                return redirect()->route('dashboard')->withCookies(); //
+            // Redirect instructors.
+            if ($user->inGroup('user')) {
+                return redirect()->route('instructor_dashboard')->withCookies();
             }
+
+            // Safe fallback for any other authenticated user group.
+            return redirect()->to('/')->withCookies();
         }
 
-        // Return the original response if login failed or for other cases
+        // If login failed, return the original response from Shield (which shows errors).
         return $result;
     }
 }

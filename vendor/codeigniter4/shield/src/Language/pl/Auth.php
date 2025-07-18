@@ -25,7 +25,7 @@ return [
     'badToken'              => 'Token dostępu jest nieprawidłowy.',
     'oldToken'              => 'Token dostępu wygasł.',
     'noUserEntity'          => 'User Entity jest niezbędne do sprawdzania poprawności hasła.',
-    'invalidEmail'          => 'Nie można zweryfikować zgodności adresu e-mail z zarejestrowanym adresem e-mail.',
+    'invalidEmail'          => '(To be translated) Unable to verify the email address "{0}" matches the email on record.',
     'unableSendEmailToUser' => 'Przepraszamy, był problem z wysłaniem wiadomości e-mail. Nie mogliśmy wysłać wiadomości e-mail do "{0}".',
     'throttled'             => 'Zbyt wiele żądań z tego adresu IP. Możesz spróbować ponownie za {0} sekund.',
     'notEnoughPrivilege'    => 'Nie masz uprawnień niezbędnych do wykonania żądanej operacji.',

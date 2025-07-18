@@ -90,14 +90,14 @@ permissions the token grants to the user. Scopes are provided when the token is 
 cannot be modified afterword.
 
 ```php
-$token = $user->gererateAccessToken('Work Laptop', ['posts.manage', 'forums.manage']);
+$token = $user->generateAccessToken('Work Laptop', ['posts.manage', 'forums.manage']);
 ```
 
 By default a user is granted a wildcard scope which provides access to all scopes. This is the
 same as:
 
 ```php
-$token = $user->gererateAccessToken('Work Laptop', ['*']);
+$token = $user->generateAccessToken('Work Laptop', ['*']);
 ```
 
 During authentication, the token the user used is stored on the user. Once authenticated, you
@@ -125,7 +125,7 @@ Configure **app/Config/AuthToken.php** for your needs.
 
 ### Access Token Lifetime
 
-Tokens will expire after a specified amount of time has passed since they have been used.
+Tokens will expire after a specified amount of time has passed since they have last been used.
 
 By default, this is set to 1 year.
 You can change this value by setting the `$unusedTokenLifetime` value. This is
@@ -136,6 +136,61 @@ that CodeIgniter provides.
 ```php
 public $unusedTokenLifetime = YEAR;
 ```
+
+
+## Expiring Access Tokens
+
+By default, the Access Tokens don't expire unless they reach the Access Token's lifetime expiration after their last use date.
+
+Access Tokens can be set to expire through the `generateAccessToken()` method. This takes the expiration date as the `$expiresAt` argument. To update an existing HMAC key expiration date, use `updateAcessTokenExpiration($accessTokenID, $expiresAt)`. To remove it, use `removeAccessTokenExpiration($accessTokenID)`.
+
+`$expiresAt` [Time](https://codeigniter.com/user_guide/libraries/time.html) object
+
+```php
+// Expiration date = 2024-11-03 12:00:00
+$expiresAt = Time::parse('2024-11-03 12:00:00');
+$token = $this->user->generateAccessToken('foo', ['foo.bar'], $expiresAt);
+
+// Expiration date = 2024-11-15 00:00:00
+$expiresAt = Time::parse('2024-11-15 00:00:00');
+$user->updateAcessTokenExpiration($token->id, $expiresAt);
+
+// Or Expiration date = 1 month + 15 days into the future
+$expiresAt = Time::now()->addMonths(1)->addDays(15);
+$user->updateAcessTokenExpiration($token->id, $expiresAt);
+
+// Remove the expiration date
+$user->removeAccessTokenExpiration($token->id);
+```
+
+The following support methods are also available:
+
+`isAccessTokenExpired(AccessToken $accessToken)` - Checks if Access Token is expired. Returns `true` if the Access Token is expired; otherwise, returns `false`.
+
+```php
+$expiresAt = Time::parse('2024-11-03 12:00:00');
+
+$token = $this->user->generateAccessToken('foo', ['foo.bar'], $expiresAt);
+
+$this->user->isAccessTokenExpired($token); // Returns true
+```
+
+`canAccessTokenExpire(AccessToken $accessToken)` - Returns `true` if the Access Token has a set expiration date; otherwise, returns `false`.
+
+```php
+$expiresAt = Time::parse('2024-11-03 12:00:00');
+
+$token = $this->user->generateAccessToken('foo', ['foo.bar'], $expiresAt);
+$this->user->canAccessTokenExpire($token2); // Returns false
+
+$token2 = $this->user->generateAccessToken('bar');
+$this->user->canAccessTokenExpire($token); // Returns true
+```
+
+
+### Access Token Expiration vs Lifetime
+
+Expiration and lifetime are two different concepts. The lifetime is the maximum time allowed for the token to exist since its last use. Token expiration, on the other hand, is a set date in which the Access Token will cease to function.
 
 ### Login Attempt Logging
 

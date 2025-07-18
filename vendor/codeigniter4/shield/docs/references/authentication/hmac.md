@@ -97,6 +97,63 @@ You can revoke all HMAC Keys with the `revokeAllHmacTokens()` method.
 $user->revokeAllHmacTokens();
 ```
 
+## Expiring HMAC Keys
+
+By default, the HMAC keys don't expire unless they reach the HMAC keys' lifetime expiration after their last use date.
+
+HMAC keys can be set to expire through the `generateHmacToken()` method. This takes the expiration date as the `$expiresAt` argument. To update an existing HMAC key expiration date, use `updateHmacTokenExpiration($hmacTokenID, $expiresAt)`. To remove it, use `removeHmacTokenExpiration($hmacTokenID)`.
+
+`$expiresAt` [Time](https://codeigniter.com/user_guide/libraries/time.html) object
+
+```php
+// Expiration date = 2024-11-03 12:00:00
+$expiresAt = Time::parse('2024-11-03 12:00:00');
+$token = $this->user->generateHmacToken('foo', ['foo.bar'], $expiresAt);
+
+// Expiration date = 2024-11-15 00:00:00
+$expiresAt = Time::parse('2024-11-15 00:00:00');
+$user->updateHmacTokenExpiration($token->id, $expiresAt);
+
+// Expiration date = 1 month + 15 days into the future
+$expiresAt = Time::now()->addMonths(1)->addDays(15);
+$user->updateHmacTokenExpiration($token->id, $expiresAt);
+
+// Remove the expiration date
+$user->removeHmacTokenExpiration($token->id);
+```
+
+The following support methods are also available:
+
+`isHmacTokenExpired(AccessToken $hmacToken)` - Checks if the HMAC key is expired. Returns `true` if the HMAC key is expired; otherwise, returns `false`.
+
+```php
+$expiresAt = Time::parse('2024-11-03 12:00:00');
+$token = $this->user->generateHmacToken('foo', ['foo.bar'], $expiresAt);
+
+$this->user->isHmacTokenExpired($token); // Returns true
+```
+
+`canHmacTokenExpire(AccessToken $hmacToken)` - Checks if HMAC key has an expiration set. Returns `true` if the HMAC key is expired; otherwise, returns `false`.
+
+```php
+$expiresAt = Time::parse('2024-11-03 12:00:00');
+
+$token = $this->user->generateHmacToken('foo', ['foo.bar'], $expiresAt);
+$this->user->canHmacTokenExpire($token); // Returns true
+
+$token2 = $this->user->generateHmacToken('bar');
+$this->user->canHmacTokenExpire($token2); // Returns false
+```
+
+You can also easily set all existing HMAC keys/tokens as expired with the `spark` command:
+```console
+php spark shield:hmac invalidateAll
+```
+
+!!! warning
+
+    This command invalidates _all_ keys for _all_ users.
+
 ## Retrieving HMAC Keys
 
 The following methods are available to help you retrieve a user's HMAC keys:
@@ -119,14 +176,14 @@ permissions the token grants to the user. Scopes are provided when the token is 
 cannot be modified afterword.
 
 ```php
-$token = $user->gererateHmacToken('Work Laptop', ['posts.manage', 'forums.manage']);
+$token = $user->generateHmacToken('Work Laptop', ['posts.manage', 'forums.manage']);
 ```
 
 By default, a user is granted a wildcard scope which provides access to all scopes. This is the
 same as:
 
 ```php
-$token = $user->gererateHmacToken('Work Laptop', ['*']);
+$token = $user->generateHmacToken('Work Laptop', ['*']);
 ```
 
 During authentication, the HMAC Keys the user used is stored on the user. Once authenticated, you
@@ -217,7 +274,7 @@ Configure **app/Config/AuthToken.php** for your needs.
 
 ### HMAC Keys Lifetime
 
-HMAC Keys/Tokens will expire after a specified amount of time has passed since they have been used.
+HMAC Keys will expire after a specified amount of time has passed since they have been used.
 
 By default, this is set to 1 year. You can change this value by setting the `$unusedTokenLifetime`
 value. This is in seconds so that you can use the
@@ -227,6 +284,10 @@ that CodeIgniter provides.
 ```php
 public $unusedTokenLifetime = YEAR;
 ```
+
+### HMAC Keys Expiration vs Lifetime
+
+Expiration and lifetime are two different concepts. The lifetime is the maximum time allowed for the HMAC Key to exist since its last use. HMAC Key expiration, on the other hand, is a set date in which the HMAC Key will cease to function.
 
 ### Login Attempt Logging
 

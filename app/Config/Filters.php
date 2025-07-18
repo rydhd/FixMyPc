@@ -2,6 +2,7 @@
 
 namespace Config;
 
+use App\Filters\GuestFilter;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
@@ -36,6 +37,7 @@ class Filters extends BaseFilters
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
         'session'       => SessionAuth::class,
+        'guest'         => GuestFilter::class, // ✅ ADD THIS LINE
     ];
 
     /**

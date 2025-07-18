@@ -95,6 +95,11 @@ class Auth extends BaseConfig
      * - register: \CodeIgniter\Shield\Authentication\Actions\EmailActivator::class
      * - login:    \CodeIgniter\Shield\Authentication\Actions\Email2FA::class
      *
+     * Custom Actions and Requirements:
+     *
+     * - All actions must implement \CodeIgniter\Shield\Authentication\Actions\ActionInterface.
+     * - Custom actions for "register" must have a class name that ends with the suffix "Activator" (e.g., `CustomSmsActivator`) ensure proper functionality.
+     *
      * @var array<string, class-string<ActionInterface>|null>
      */
     public array $actions = [
@@ -160,7 +165,7 @@ class Auth extends BaseConfig
      * --------------------------------------------------------------------
      * If true, will always update the `last_active` datetime for the
      * logged-in user on every page request.
-     * This feature only works when session/tokens filter is active.
+     * This feature only works when session/tokens/hmac/chain/jwt filter is active.
      *
      * @see https://codeigniter4.github.io/shield/quick_start_guide/using_session_auth/#protecting-pages for set filters.
      */
@@ -506,23 +511,10 @@ class Auth extends BaseConfig
      */
     protected function getUrl(string $url): string
     {
-        // To accommodate all url patterns
-        $final_url = '';
-
-        switch (true) {
-            case strpos($url, 'http://') === 0 || strpos($url, 'https://') === 0: // URL begins with 'http' or 'https'. E.g. http://example.com
-                $final_url = $url;
-                break;
-
-            case route_to($url) !== false: // URL is a named-route
-                $final_url = rtrim(url_to($url), '/ ');
-                break;
-
-            default: // URL is a route (URI path)
-                $final_url = rtrim(site_url($url), '/ ');
-                break;
-        }
-
-        return $final_url;
+        return match (true) {
+            str_starts_with($url, 'http://') || str_starts_with($url, 'https://') => $url,
+            route_to($url) !== false                                              => rtrim(url_to($url), '/ '),
+            default                                                               => rtrim(site_url($url), '/ '),
+        };
     }
 }

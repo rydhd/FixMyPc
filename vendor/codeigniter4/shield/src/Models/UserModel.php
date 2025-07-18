@@ -39,7 +39,7 @@ class UserModel extends BaseModel
         'last_active',
     ];
     protected $useTimestamps = true;
-    protected $afterFind     = ['fetchIdentities'];
+    protected $afterFind     = ['fetchIdentities', 'fetchGroups', 'fetchPermissions'];
     protected $afterInsert   = ['saveEmailIdentity'];
     protected $afterUpdate   = ['saveEmailIdentity'];
 
@@ -48,6 +48,18 @@ class UserModel extends BaseModel
      * when user records are fetched from the database.
      */
     protected bool $fetchIdentities = false;
+
+    /**
+     * Whether groups should be included
+     * when user records are fetched from the database.
+     */
+    protected bool $fetchGroups = false;
+
+    /**
+     * Whether permissions should be included
+     * when user records are fetched from the database.
+     */
+    protected bool $fetchPermissions = false;
 
     /**
      * Save the User for afterInsert and afterUpdate
@@ -69,6 +81,30 @@ class UserModel extends BaseModel
     public function withIdentities(): self
     {
         $this->fetchIdentities = true;
+
+        return $this;
+    }
+
+    /**
+     * Mark the next find* query to include groups
+     *
+     * @return $this
+     */
+    public function withGroups(): self
+    {
+        $this->fetchGroups = true;
+
+        return $this;
+    }
+
+    /**
+     * Mark the next find* query to include permissions
+     *
+     * @return $this
+     */
+    public function withPermissions(): self
+    {
+        $this->fetchPermissions = true;
 
         return $this;
     }
@@ -148,15 +184,124 @@ class UserModel extends BaseModel
     }
 
     /**
+     * Populates groups for all records
+     * returned from a find* method. Called
+     * automatically when $this->fetchGroups == true
+     *
+     * Model event callback called by `afterFind`.
+     */
+    protected function fetchGroups(array $data): array
+    {
+        if (! $this->fetchGroups) {
+            return $data;
+        }
+
+        $userIds = $data['singleton']
+            ? array_column($data, 'id')
+            : array_column($data['data'], 'id');
+
+        if ($userIds === []) {
+            return $data;
+        }
+
+        /** @var GroupModel $groupModel */
+        $groupModel = model(GroupModel::class);
+
+        // Get our groups for all users
+        $groups = $groupModel->getGroupsByUserIds($userIds);
+
+        if ($groups === []) {
+            return $data;
+        }
+
+        $mappedUsers = $this->assignProperties($data, $groups, 'groups');
+
+        $data['data'] = $data['singleton'] ? $mappedUsers[$data['id']] : $mappedUsers;
+
+        return $data;
+    }
+
+    /**
+     * Populates permissions for all records
+     * returned from a find* method. Called
+     * automatically when $this->fetchPermissions == true
+     *
+     * Model event callback called by `afterFind`.
+     */
+    protected function fetchPermissions(array $data): array
+    {
+        if (! $this->fetchPermissions) {
+            return $data;
+        }
+
+        $userIds = $data['singleton']
+            ? array_column($data, 'id')
+            : array_column($data['data'], 'id');
+
+        if ($userIds === []) {
+            return $data;
+        }
+
+        /** @var PermissionModel $permissionModel */
+        $permissionModel = model(PermissionModel::class);
+
+        $permissions = $permissionModel->getPermissionsByUserIds($userIds);
+
+        if ($permissions === []) {
+            return $data;
+        }
+
+        $mappedUsers = $this->assignProperties($data, $permissions, 'permissions');
+
+        $data['data'] = $data['singleton'] ? $mappedUsers[$data['id']] : $mappedUsers;
+
+        return $data;
+    }
+
+    /**
+     * Map our users by ID to make assigning simpler
+     *
+     * @param array       $data       Event $data
+     * @param list<array> $properties
+     * @param string      $type       One of: 'groups' or 'permissions'
+     *
+     * @return list<User> UserId => User object
+     */
+    private function assignProperties(array $data, array $properties, string $type): array
+    {
+        $mappedUsers = [];
+
+        $users = $data['singleton'] ? [$data['data']] : $data['data'];
+
+        foreach ($users as $user) {
+            $mappedUsers[$user->id] = $user;
+        }
+        unset($users);
+
+        // Build method name
+        $method = 'set' . ucfirst($type) . 'Cache';
+
+        // Now assign the properties to the user
+        foreach ($properties as $userId => $propertyArray) {
+            $mappedUsers[$userId]->{$method}($propertyArray);
+        }
+        unset($properties);
+
+        return $mappedUsers;
+    }
+
+    /**
      * Adds a user to the default group.
      * Used during registration.
      */
     public function addToDefaultGroup(User $user): void
     {
-        $defaultGroup  = setting('AuthGroups.defaultGroup');
-        $allowedGroups = array_keys(setting('AuthGroups.groups'));
+        $defaultGroup = setting('AuthGroups.defaultGroup');
 
-        if (empty($defaultGroup) || ! in_array($defaultGroup, $allowedGroups, true)) {
+        /** @var GroupModel $groupModel */
+        $groupModel = model(GroupModel::class);
+
+        if (empty($defaultGroup) || ! $groupModel->isValidGroup($defaultGroup)) {
             throw new InvalidArgumentException(lang('Auth.unknownGroup', [$defaultGroup ?? '--not found--']));
         }
 
@@ -202,20 +347,20 @@ class UserModel extends BaseModel
         foreach ($credentials as $key => $value) {
             $this->where(
                 'LOWER(' . $this->db->protectIdentifiers($this->table . ".{$key}") . ')',
-                strtolower($value)
+                strtolower($value),
             );
         }
 
         if ($email !== null) {
             /** @var array<string, int|string|null>|null $data */
             $data = $this->select(
-                sprintf('%1$s.*, %2$s.secret as email, %2$s.secret2 as password_hash', $this->table, $this->tables['identities'])
+                sprintf('%1$s.*, %2$s.secret as email, %2$s.secret2 as password_hash', $this->table, $this->tables['identities']),
             )
                 ->join($this->tables['identities'], sprintf('%1$s.user_id = %2$s.id', $this->tables['identities'], $this->table))
                 ->where($this->tables['identities'] . '.type', Session::ID_TYPE_EMAIL_PASSWORD)
                 ->where(
                     'LOWER(' . $this->db->protectIdentifiers($this->tables['identities'] . '.secret') . ')',
-                    strtolower($email)
+                    strtolower($email),
                 )
                 ->asArray()
                 ->first();
@@ -394,5 +539,15 @@ class UserModel extends BaseModel
         if (! is_a($this->returnType, User::class, true)) {
             throw new LogicException('Return type must be a subclass of ' . User::class);
         }
+    }
+
+    /**
+     * Returns a new User Entity.
+     *
+     * @param array<string, array<array-key, mixed>|bool|float|int|object|string|null> $data (Optional) user data
+     */
+    public function createNewUser(array $data = []): User
+    {
+        return new $this->returnType($data);
     }
 }

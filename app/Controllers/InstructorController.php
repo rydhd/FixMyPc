@@ -113,12 +113,28 @@ class InstructorController extends BaseController
         $studentModel = new StudentModel();
         $instructorId = auth()->id();
 
-        $data['students'] = $studentModel
+        // 1. Fetch all students for the instructor
+        $students = $studentModel
             ->select('students.*')
             ->join('instructor_students', 'instructor_students.student_id = students.id')
             ->where('instructor_students.instructor_id', $instructorId)
             ->findAll();
 
+        // 2. Get a unique list of sections from the student data
+        $sections = [];
+        if (!empty($students)) {
+            // Get all values from the 'section' column and find the unique ones
+            $sections = array_unique(array_column($students, 'section'));
+            sort($sections); // Sort the sections alphabetically
+        }
+
+        // 3. Prepare all data to be passed to the view
+        $data = [
+            'students' => $students,
+            'sections' => $sections, // Add the sections to the data array
+        ];
+
+        // 4. Load the view with the complete data
         return view('instructor/students', $data);
     }
 

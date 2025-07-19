@@ -1,66 +1,76 @@
 <section class="section">
-    <div class="row" id="table-bordered">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Student Information</h4>
-                </div>
-                <div class="card-content">
-                    <div class="card-body">
-                        <p class="card-text">
-                            Click on a student's row to view details or perform actions.
-                        </p>
-                    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Student Information</h4>
+        </div>
+        <div class="card-body">
 
-                    <?php if (session()->getFlashdata('message')): ?>
-                        <div class="alert alert-success mx-4"><?= session()->getFlashdata('message') ?></div>
+            <?php if (session()->getFlashdata('message')): ?>
+                <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
+            <?php endif; ?>
+            <div id="custom-filter-container" style="display: none;">
+                <label for="section-select-filter">Filter by Section: </label>
+                <select id="section-select-filter" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    <?php if (!empty($sections)) : ?>
+                        <?php foreach ($sections as $section) : ?>
+                            <option value="<?= esc($section) ?>"><?= esc($section) ?></option>
+                        <?php endforeach; ?>
                     <?php endif; ?>
+                </select>
+            </div>
+            <div class="buttons text-end">
+                <button type="button" class="btn icon icon-left btn-primary" data-bs-toggle="modal" data-bs-target="#uploadClassListModal">
+                    <i class="bi bi-plus-lg"></i>
+                    Add Class
+                </button>
+                <button type="button" class="btn icon icon-left btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                    <i data-feather="user-plus"></i> Add Student
+                </button>
+            </div>
+            <div class="table-responsive datatable-minimal">
+                <table class="table table-striped" id="table2">
+                    <thead>
+                    <tr>
+                        <th>LAST NAME</th>
+                        <th>FIRST NAME</th>
+                        <th>MIDDLE NAME</th>
+                        <th>GRADE LEVEL</th>
+                        <th>SECTION</th>
+                        <th>STUDENT CODE</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php if (!empty($students) && is_array($students)): ?>
+                        <?php foreach ($students as $student): ?>
+                            <tr class="student-row"
+                                data-bs-toggle="modal"
+                                data-bs-target="#studentDetailsModal"
+                                data-id="<?= $student['id'] ?>"
+                                data-lastname="<?= esc($student['last_name']) ?>"
+                                data-firstname="<?= esc($student['first_name']) ?>"
+                                data-middlename="<?= esc($student['middle_name']) ?>"
+                                data-gradelevel="<?= esc($student['grade_level']) ?>"
+                                data-section="<?= esc($student['section']) ?>"
+                                data-code="<?= esc($student['code']) ?>"
+                                data-password="<?= esc($student['password']) ?>"
+                                style="cursor: pointer;">
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered mb-0">
-                            <thead>
-                            <tr>
-                                <th>LAST NAME</th>
-                                <th>FIRST NAME</th>
-                                <th>MIDDLE NAME</th>
-                                <th>GRADE LEVEL</th>
-                                <th>SECTION</th>
-                                <th>STUDENT CODE</th>
+                                <td class="text-bold-500"><?= esc($student['last_name']) ?></td>
+                                <td><?= esc($student['first_name']) ?></td>
+                                <td class="text-bold-500"><?= esc($student['middle_name']) ?></td>
+                                <td><?= esc($student['grade_level']) ?></td>
+                                <td><?= esc($student['section']) ?></td>
+                                <td><?= esc($student['code']) ?></td>
                             </tr>
-                            </thead>
-                            <tbody>
-                            <?php if (!empty($students) && is_array($students)): ?>
-                                <?php foreach ($students as $student): ?>
-                                    <tr class="student-row"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#studentDetailsModal"
-                                        data-id="<?= $student['id'] ?>"
-                                        data-lastname="<?= esc($student['last_name']) ?>"
-                                        data-firstname="<?= esc($student['first_name']) ?>"
-                                        data-middlename="<?= esc($student['middle_name']) ?>"
-                                        data-gradelevel="<?= esc($student['grade_level']) ?>"
-                                        data-section="<?= esc($student['section']) ?>"
-                                        data-code="<?= esc($student['code']) ?>"
-                                        data-password="<?= esc($student['password']) ?>"
-                                        style="cursor: pointer;">
-
-                                        <td class="text-bold-500"><?= esc($student['last_name']) ?></td>
-                                        <td><?= esc($student['first_name']) ?></td>
-                                        <td class="text-bold-500"><?= esc($student['middle_name']) ?></td>
-                                        <td><?= esc($student['grade_level']) ?></td>
-                                        <td><?= esc($student['section']) ?></td>
-                                        <td><?= esc($student['code']) ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="6" class="text-center">No students found. Upload a class list to get started.</td>
-                                </tr>
-                            <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6" class="text-center">No students found. Upload a class list to get started.</td>
+                        </tr>
+                    <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -101,7 +111,6 @@
     document.addEventListener('DOMContentLoaded', function () {
         var studentDetailsModal = document.getElementById('studentDetailsModal');
         studentDetailsModal.addEventListener('show.bs.modal', function (event) {
-            // Button that triggered the modal
             var row = event.relatedTarget;
 
             // Extract info from data-* attributes

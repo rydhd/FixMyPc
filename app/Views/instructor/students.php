@@ -3,16 +3,16 @@
 <?= $this->section('content') ?>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="buttons">
-            <button type="button" class="btn icon icon-left btn-primary" data-bs-toggle="modal" data-bs-target="#uploadClassListModal">
-                <i class="bi bi-plus-lg"></i>
-                Add Class
-            </button>
-            <button type="button" class="btn icon icon-left btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
-                <i data-feather="user-plus"></i> Add Student
-            </button>
-        </div>
-
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="home-tab" data-bs-toggle="tab" href="#home" role="tab"
+                   aria-controls="home" aria-selected="true">Class List</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab"
+                   aria-controls="profile" aria-selected="false">Statistics</a>
+            </li>
+        </ul>
         <div class="buttons">
             <form action="<?= site_url('instructor/students/delete-all') ?>" method="post" onsubmit="return confirm('DANGER: Are you absolutely sure you want to delete ALL of your students? This action is permanent and cannot be undone.');" style="display: inline;">
                 <?= csrf_field() ?>
@@ -21,28 +21,22 @@
                 </button>
             </form>
         </div>
+
     </div>
 
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-body">
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link active" id="home-tab" data-bs-toggle="tab" href="#home" role="tab"
-                               aria-controls="home" aria-selected="true">Class List</a>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab"
-                               aria-controls="profile" aria-selected="false">Statistics</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                            <?= $this->include('instructor_partials/student_table') ?>
-                        </div>
-                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                            <?= $this->include('instructor_partials/statistics_table') ?>
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                <?= $this->include('instructor_partials/student_table') ?>
+                            </div>
+                            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                <?= $this->include('instructor_partials/statistics_table') ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -192,23 +186,24 @@
 
 <?= $this->section('scripts') ?>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // This part is important: If there was a form error on the previous page
-            // (e.g., failed validation), the modal needs to re-open to show the error message.
-            <?php if (session()->getFlashdata('error')): ?>
-            var errorModal = new bootstrap.Modal(document.getElementById('uploadClassListModal'), {
-                keyboard: false
-            });
-            errorModal.show();
-            <?php endif; ?>
+        $(document).ready(function() {
 
-            // Script to automatically open the 'Add Student' modal if there were validation errors for it
-            <?php if (session()->getFlashdata('add_student_error')): ?>
-            var addStudentModal = new bootstrap.Modal(document.getElementById('addStudentModal'), {
-                keyboard: false
+            // 1. Initialize the DataTable
+            var studentTable = $('#table2').DataTable();
+
+            // 2. Replace the default dropdown with our custom section filter
+            var customFilter = $('#custom-filter-container').html();
+            $('div.dataTables_length').html(customFilter);
+
+            // 3. THE FIX: Update listener to filter by the SECTION column (index 4)
+            $('.card-body').on('change', '#section-select-filter', function() {
+                var section = $(this).val();
+
+                // Search the 5th column (index 4) for an exact match
+                studentTable.column(4).search(section).draw();
             });
-            addStudentModal.show();
-            <?php endif; ?>
+
+            // 4. Your existing modal scripts...
         });
     </script>
 <?= $this->endSection() ?>

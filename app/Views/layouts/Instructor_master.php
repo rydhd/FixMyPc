@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $this->renderSection('title') ?? 'Admin Dashboard' ?></title>
 
+    <link rel="stylesheet" href="<?= base_url('assets/compiled/css/table-datatable-jquery.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/compiled/css/app.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/compiled/css/app-dark.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/compiled/css/iconly.css') ?>">
@@ -37,6 +38,14 @@
         <?= $this->renderSection('content') ?>
     </div>
 </div>
+<script src="<?= base_url('assets/extensions/jquery/jquery.min.js') ?>"></script>
+<script src="<?= base_url('assets/extensions/datatables.net/js/jquery.dataTables.min.js') ?>"></script>
+<script src="<?= base_url('assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js') ?>"></script>
+<script src="<?= base_url('assets/static/js/pages/datatables.js') ?>"></script>
+
+<script src="<?= base_url('assets/static/js/components/dark.js') ?>"></script>
+<script src="<?= base_url('assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') ?>"></script>
+<script src="<?= base_url('assets/compiled/js/app.js') ?>"></script>
 <script src="<?= base_url('assets/static/js/components/dark.js') ?>"></script>
 <script src="<?= base_url('assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') ?>"></script>
 <script src="<?= base_url('assets/compiled/js/app.js') ?>"></script>

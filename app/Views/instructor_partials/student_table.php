@@ -1,9 +1,7 @@
 <section class="section">
-    <div class="card">
         <div class="card-header">
             <h4 class="card-title">Student Information</h4>
         </div>
-        <div class="card-body">
 
             <?php if (session()->getFlashdata('message')): ?>
                 <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
@@ -72,8 +70,7 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-    </div>
+
 </section>
 
 <div class="modal fade" id="studentDetailsModal" tabindex="-1" aria-labelledby="studentDetailsModalLabel" aria-hidden="true">

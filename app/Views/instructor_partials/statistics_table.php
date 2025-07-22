@@ -1,11 +1,10 @@
 <section class="section">
-        <div class="card-header">
-            <h4 class="card-title">Student Statistics</h4>
+        <div class="card-header card-header d-flex justify-content-between align-items-center rounded-4">
+            <h4 class="card-title mb-0">Student Statistics</h4>
         </div>
-        <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-striped" id="table3">
-                    <thead>
+                    <thead class="table-light">
                     <tr>
                         <th>USERNAME</th>
                         <th>SCORE</th>
@@ -25,15 +24,10 @@
                                 <td>2025-07-19</td>
                             </tr>
                         <?php endforeach; ?>
-                    <?php else : ?>
-                        <tr>
-                            <td colspan="5" class="text-center">No student statistics found.</td>
-                        </tr>
                     <?php endif; ?>
                     </tbody>
                 </table>
             </div>
-        </div>
 </section>
 
 <script>

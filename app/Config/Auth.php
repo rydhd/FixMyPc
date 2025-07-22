@@ -437,8 +437,24 @@ class Auth extends ShieldAuth
      */
     public function loginRedirect(): string
     {
-        $session = session();
-        $url     = $session->getTempdata('beforeLoginUrl') ?? setting('Auth.redirects')['login'];
+        // Check if the user is logged in
+        if (auth()->loggedIn()) {
+            $user = auth()->user();
+
+            // Redirect masteradmin and superadmin to their dashboard
+            if ($user->inGroup('masteradmin', 'superadmin')) {
+                return route_to('master_dashboard');
+            }
+
+            // Redirect 'user' group (instructors) to their dashboard
+            if ($user->inGroup('user')) {
+                return route_to('instructor_dashboard');
+            }
+        }
+
+        // Fallback URL if the user has no specific group redirect
+        // This will use the 'login' value from the $redirects array.
+        $url = setting('Auth.redirects')['login'];
 
         return $this->getUrl($url);
     }

@@ -8,9 +8,6 @@ use CodeIgniter\Router\RouteCollection;
 
 $routes->get('/', 'Home::index');
 
-// --- AUTH ROUTES ---
-
-// Your custom routes should come FIRST
 // This tells the app to use your controller for login and logout
 $routes->get('login', 'LoginController::loginView', ['filter' => 'guest']);
 $routes->post('login', 'LoginController::loginAction');
@@ -23,7 +20,7 @@ $routes->post('register', 'RegisterController::registerAction');
 
 // --- DASHBOARD ROUTES ---
 // Grouping routes that require a logged-in session.
-$routes->group('instructor', ['filter' => 'session'], function($routes) {
+$routes->group('instructor', ['filter' => ['session', 'group:user']], function($routes) {
     // Corresponds to 'dashboard'
     $routes->get('dashboard', 'InstructorController::dashboard',['as' => 'instructor_dashboard']);
 
@@ -34,15 +31,15 @@ $routes->group('instructor', ['filter' => 'session'], function($routes) {
     $routes->post('classlist/upload', 'InstructorController::uploadClasslist');
     $routes->post('students/delete/(:num)', 'InstructorController::deleteStudent/$1');
 
-// Handles showing the edit form
+    // Handles showing the edit form
     $routes->get('students/edit/(:num)', 'InstructorController::edit/$1');
 
-// Handles the submission of the edit form
+    // Handles the submission of the edit form
     $routes->post('students/update/(:num)', 'InstructorController::update/$1');
 
     // ✅ ADD THIS LINE FOR THE DELETE ALL ACTION
     $routes->post('students/delete-all', 'InstructorController::deleteAllStudents');
-    $routes->post('students/add', 'InstructorController::addStudent');
+    $routes->post('students/create', 'InstructorController::addStudent');
 
 });
 
@@ -55,12 +52,9 @@ $routes->group('master', ['filter' => ['session', 'group:masteradmin,superadmin'
     // This route is accessed via /master/students
     $routes->get('students', 'MasterAdminController::students',['as' => 'master_students']);
     $routes->get('instructor', 'MasterAdminController::instructor',['as' => 'master_instructor']);
-
     $routes->get('students/edit/(:num)', 'MasterAdminController::edit/$1');
     $routes->post('students/update/(:num)', 'MasterAdminController::update/$1');
     $routes->post('students/delete/(:num)', 'MasterAdminController::deleteStudent/$1');
-
-    // --- Corrected Routes for Access Codes ---
 
     // Defines the route for displaying the list of access codes.
     // GET /master/access-codes -> MasterAdminController::accessCodes()

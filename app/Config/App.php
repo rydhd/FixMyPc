@@ -59,6 +59,69 @@ class App extends BaseConfig
      */
     public string $uriProtocol = 'REQUEST_URI';
 
+    /**
+     * --------------------------------------------------------------------------
+     * Cross-Site Request Forgery (CSRF) Protection
+     * --------------------------------------------------------------------------
+     *
+     * Enables a CSRF cookie token to be set. When set to true, the
+     * CodeIgniter CSRF class will be instantiated and used.
+     *
+     * @deprecated Use `Config\Security` instead.
+     */
+    public bool $CSRFProtection = true;
+
+    /**
+     * The token name.
+     *
+     * @deprecated Use `Config\Security` instead.
+     */
+    public string $CSRFTokenName = 'csrf_test_name';
+
+    /**
+     * The header name.
+     *
+     * @deprecated Use `Config\Security` instead.
+     */
+    public string $CSRFHeaderName = 'X-CSRF-TOKEN';
+
+    /**
+     * The cookie name.
+     *
+     * @deprecated Use `Config\Security` instead.
+     */
+    public string $CSRFCookieName = 'csrf_cookie_name';
+
+    /**
+     * The cookie expiration time in seconds.
+     *
+     * @deprecated Use `Config\Security` instead.
+     */
+    public int $CSRFExpire = 7200;
+
+    /**
+     * Regenerate the CSRF token on every request?
+     *
+     * @deprecated Use `Config\Security` instead.
+     */
+    public bool $CSRFRegenerate = true;
+
+    /**
+     * Redirect to the previous page on a failed CSRF check?
+     *
+     * @deprecated Use `Config\Security` instead.
+     */
+    public bool $CSRFRedirect = false;
+
+    /**
+     * The SameSite setting for the CSRF cookie.
+     *
+     * @deprecated Use `Config\Security` instead.
+     *
+     * @var string 'Lax'|'Strict'|'None'
+     */
+    public string $CSRFSameSite = 'Lax';
+
     /*
     |--------------------------------------------------------------------------
     | Allowed URL Characters

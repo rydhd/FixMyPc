@@ -140,7 +140,11 @@ class MasterAdminController extends BaseController
     {
         // Ensure the user is logged in
         if (!auth()->loggedIn()) {
-            return redirect()->to('/login')->with('error', 'You must be logged in to perform this action.');
+            // For an AJAX request, return a JSON error
+            return $this->response->setStatusCode(401)->setJSON([
+                    'success' => false,
+                    'message' => 'You must be logged in to perform this action.'
+            ]);
         }
 
         $accessCodeModel = new AccessCodeModel();
@@ -149,15 +153,23 @@ class MasterAdminController extends BaseController
         $newCode = bin2hex(random_bytes(8)); // Creates a 16-character random hex string
 
         $data = [
-            'code'       => $newCode,
-            'created_by' => auth()->id(), // Get the logged-in masteradmin's ID
+                'code'       => $newCode,
+                'created_by' => auth()->id(), // Get the logged-in masteradmin's ID
         ];
 
         // Save the new code to the database
         if ($accessCodeModel->save($data)) {
-            return redirect()->to('/master/access-codes')->with('message', 'Successfully generated a new access code!');
+            // On success, return the new code in a JSON response
+            return $this->response->setJSON([
+                    'success' => true,
+                    'code'    => $newCode
+            ]);
         } else {
-            return redirect()->back()->with('error', 'Failed to generate access code. Please try again.');
+            // On failure, return a JSON error
+            return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Failed to generate access code. Please try again.'
+            ]);
         }
     }
 }

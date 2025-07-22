@@ -50,6 +50,7 @@
 <script src="<?= base_url('assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') ?>"></script>
 <script src="<?= base_url('assets/compiled/js/app.js') ?>"></script>
 
+<script src="<?= base_url('assets/vendors/apexcharts/apexcharts.js') ?>"></script>
 <script src="<?= base_url('assets/extensions/apexcharts/apexcharts.min.js') ?>"></script>
 <script src="<?= base_url('assets/static/js/pages/dashboard.js') ?>"></script>
 
@@ -63,6 +64,7 @@
 <script src="<?= base_url('assets/extensions/filepond/filepond.js') ?>"></script>
 <script src="<?= base_url('assets/extensions/toastify-js/src/toastify.js') ?>"></script>
 <script src="<?= base_url('assets/static/js/pages/filepond.js') ?>"></script><?= $this->renderSection('scripts') ?>
+<script src="<?= base_url('assets/extensions/feather-icons/feather.min.js') ?>"></script>
 
 </body>
 

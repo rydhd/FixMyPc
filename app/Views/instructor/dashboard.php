@@ -1,42 +1,37 @@
 <?= $this->extend('layouts/instructor_master') ?>
 
 <?= $this->section('content') ?>
-    <div class="row">
-        <div class="col-6 col-lg-4 col-md-6">
-            <div class="card">
-                <div class="card-body px-3 py-4-5">
-                    <div class="row">
-                        <div class="col-md-auto">
-                            <div class="stats-icon purple">
-                                <i class="iconly-boldShow"></i>
-                            </div>
+    <div class="d-flex flex-wrap gap-3">
+        <div class="card" style="width: 220px;">
+            <div class="card-body rounded-3">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="avatar bg-primary rounded-3 p-3">
+                            <i class="bi bi-people-fill text-white fs-4"></i>
                         </div>
-                        <div class="col-md-8">
-                            <h6 class="text-muted font-semibold">Number of Students</h6>
-                            <h6 class="font-extrabold mb-0"><?= $student_count ?? 0 ?></h6>
-                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-muted mb-1">Number of Students</h6>
+                        <h5 class="mb-0">50</h5>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-lg-4 col-md-6">
-            <a href="#" data-bs-toggle="modal" data-bs-target="#studentRankingModal" class="text-decoration-none">
-                <div class="card">
-                    <div class="card-body px-3 py-4-5">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="stats-icon blue">
-                                    <i class="iconly-boldProfile"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-8">
-                                <h6 class="text-muted font-semibold">Student Ranking</h6>
-                                <h6 class="font-extrabold mb-0">Top 10</h6>
-                            </div>
+
+        <div class="card" style="width: 220px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#studentRankingModal">
+            <div class="card-body rounded-3">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="avatar bg-info rounded-3 p-3">
+                            <i class="bi bi-person-check-fill text-white fs-4"></i>
                         </div>
                     </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-muted mb-1">Student Ranking</h6>
+                        <h5 class="mb-0">Top 10</h5>
+                    </div>
                 </div>
-            </a>
+            </div>
         </div>
     </div>
 
@@ -111,7 +106,6 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

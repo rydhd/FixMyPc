@@ -1,1 +1,43 @@
-table.dataTable td{padding:15px 8px!important}.fontawesome-icons .the-icon svg{font-size:24px}.page-item.active .page-link{color:#fff!important}.datatable-minimal div.dataTables_wrapper div.dataTables_paginate ul.pagination{justify-content:flex-end!important;margin-right: 15px;}.datatable-minimal div.dataTables_wrapper div.dataTables_filter{text-align:left;margin-top: 15px}div.dataTables_wrapper div.dataTables_info{padding-top:.4rem;margin-left: 10px}
+table.dataTable td {
+    padding: 15px 8px !important;
+}
+
+/* Adds a border with rounded corners around the entire table */
+table.dataTable {
+    border: 1px solid #dee2e6; /* A standard light grey border */
+    border-radius: .375rem; /* Matches Bootstrap's default rounding */
+}
+
+/* Adds a horizontal line below each data row in the table body */
+table.dataTable tbody tr {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.fontawesome-icons .the-icon svg {
+    font-size: 24px
+}
+
+.page-item.active .page-link {
+    color: #fff !important
+}
+
+.datatable-minimal div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+    justify-content: flex-end !important;
+    margin-right: 15px;
+}
+
+/* Styles the search box container */
+.datatable-minimal div.dataTables_wrapper div.dataTables_filter {
+    text-align: left;
+    margin-top: 15px;
+
+    /* New styles for the border */
+    border: 1px solid #dee2e6;
+    border-radius: .375rem;
+    padding: 1rem; /* Adds some space inside the border */
+}
+
+div.dataTables_wrapper div.dataTables_info {
+    padding-top: .4rem;
+    margin-left: 10px
+}

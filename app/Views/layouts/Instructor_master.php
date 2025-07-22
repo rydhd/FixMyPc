@@ -65,7 +65,7 @@
 <script src="<?= base_url('assets/extensions/toastify-js/src/toastify.js') ?>"></script>
 <script src="<?= base_url('assets/static/js/pages/filepond.js') ?>"></script><?= $this->renderSection('scripts') ?>
 <script src="<?= base_url('assets/extensions/feather-icons/feather.min.js') ?>"></script>
-
+<link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>">
 </body>
 
 </html>

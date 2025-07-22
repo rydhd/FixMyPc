@@ -1,0 +1,130 @@
+/* public/assets/css/style.css */
+
+@font-face {
+    font-family: 'VT323'; /* You give it a name you'll use in font-family */
+    src: url('../fonts/VT323-Regular.ttf') format('truetype'); /* Path to your font file */
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Tells the browser how to display text while the font is loading */
+}
+
+/* Now, apply this font globally */
+body {
+    font-family: 'VT323', monospace; /* Use your custom font, with a generic monospace fallback */
+    font-size: 16px; /* Adjust base font size as VT323 might need to be larger for readability */
+    line-height: 1.5;
+}
+
+/* Ensure other elements also use this font, overriding any default Bootstrap or template fonts */
+h1, h2, h3, h4, h5, h6,
+input, button, select, textarea,
+.form-label, .table thead th, .btn, .nav-link,
+.sidebar-link, .text-subtitle,
+.font-semibold, .font-extrabold {
+    font-family: 'VT323', monospace !important; /* Use !important if needed to override template styles */
+    /* Adjust font-size for these specific elements if they still look off */
+}
+
+/* ... (rest of your custom pixel art CSS) ... */
+/* public/assets/css/style.css */
+
+/* --- Table Styling for Pixel Art Theme --- */
+
+/* Base table styles */
+/* public/assets/css/style.css */
+
+/* --- Define CSS Variables for your color palette --- */
+:root {
+    /* Your primary pixel art colors */
+    --primary-color: #007bff; /* Example, adjust as per your main theme */
+    --secondary-color: #E5FFC5;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+
+    /* General text and background for the overall theme */
+    --bg-color: #E5FFC5; /* A dark background that complements the table */
+    --text-color: #041a61; /* Light text for dark backgrounds */
+    --border-color: #E5FFC5; /* A contrasting color for borders (e.g., a dark green) */
+    --shadow-color: #e5ffc5; /* Dark shadow for depth */
+    --card-bg: #e5ffc5; /* Dark card background */
+
+    /* Table Specific Colors using 16647F and variations */
+    --table-bg-color: #16647F; /* Your desired main table background */
+    --table-header-bg: #1B7A9E; /* Slightly lighter/more vibrant for header */
+    --table-row-bg: #16647F; /* Default row background */
+    --table-striped-odd-bg: #1A708F; /* Slightly lighter shade for striped rows */
+    --table-row-hover-bg: #002d3c; /* A more noticeable hover state */
+    --header-text-color: #E5FFC5; /* White text for headers */
+
+    /* Modal specific colors (adjust if you want them to be different from main content) */
+    --modal-bg: #E5FFC5; /* Dark modal background */
+    --modal-text-color: #E5FFC5;
+    --modal-border-color: #E5FFC5;
+    --modal-table-bg: #16647F; /* Using the same color for table inside modal */
+}
+
+
+/* --- Table Styling (uses the variables defined above) --- */
+
+/* Base table styles */
+.table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 1rem;
+    color: var(--text-color); /* Text color set in :root */
+    font-family: 'VT323', monospace;
+}
+
+/* Table border styles */
+.table.table-bordered,
+.table.table-bordered th,
+.table.table-bordered td {
+    border: 2px solid var(--border-color); /* Border color set in :root */
+}
+
+/* Background for the entire table */
+.table {
+    background-color: var(--table-bg-color); /* Main table background color */
+}
+
+/* Table header background */
+.table thead th {
+    background-color: var(--table-header-bg); /* Header background color */
+    color: var(--header-text-color);
+    padding: 0.75rem;
+    vertical-align: bottom;
+    border-bottom: 2px solid var(--border-color);
+    text-transform: uppercase;
+}
+
+/* Table body row backgrounds */
+.table tbody tr {
+    background-color: var(--table-row-bg); /* Default row background */
+}
+
+/* Striped table rows (if using Bootstrap's .table-striped) */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--table-striped-odd-bg); /* Striped row background */
+}
+
+/* Hover effect for rows */
+.table tbody tr:hover {
+    background-color: var(--table-row-hover-bg); /* Hover background */
+    cursor: pointer;
+}
+
+/* Table data cells */
+.table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Apply pixel font to card titles and text within this section */
+.card-header h4.card-title,
+.card-text {
+    font-family: 'VT323', monospace !important;
+    color: var(--text-color); /* Ensure text contrasts with card/table background */
+}
+
+/* General card styling if not already defined for the pixel theme */

@@ -34,7 +34,7 @@
 
             <div>
                 <a href="<?= site_url('login') ?>" class="btn btn-primary btn-lg px-4 me-2">Log In</a>
-                <a href="<?= site_url('register') ?>" class="btn btn-success btn-lg px-4">Register</a>
+                <a href="<?= site_url('register') ?>" class="btn btn-primary btn-lg px-4 me-2">Register</a>
             </div>
 
         </div>

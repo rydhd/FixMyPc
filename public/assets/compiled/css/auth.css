@@ -1,43 +1,57 @@
-body {
-    background-color: var(--bs-body-bg)
+html, body {
+    height: 100%;
+    overflow: hidden; /* This stops the page from scrolling */
+    margin: 0;
+    padding: 0;
+    background-color: var(--bs-body-bg);
 }
 
 #auth {
     height: 100vh;
-    overflow-x: hidden
 }
 
 #auth #auth-right {
     height: 100%;
-    background: url("../jpg/pokemon.jpg");
+    background: url("../png/FixMyPc bg.png") no-repeat;
     background-size: cover;
+    background-position: right center; /* Positioned to show the character */
+}
+
+/* Added for the register page background */
+#auth #auth-right-register {
+    height: 100%;
+    background: url("../png/FixMyPc bg.png") no-repeat;
+    background-size: cover;
+    background-position: -530px center;
 }
 
 #auth #auth-left {
-    padding: 5rem
+    padding: 5rem;
+    background-color: #041A61;
 }
 
 #auth #auth-left .auth-title {
     font-size: 4rem;
     margin-bottom: 1rem;
-    color: black;
-
+    color: #C4CEEE;
 }
 
 #auth #auth-left .auth-subtitle {
     font-size: 1.7rem;
     line-height: 2.5rem;
-    color: #000000;
+    color: #C4CEEE; /* ✅ FIXED: Changed color to be visible */
 }
 
 #auth #auth-left .auth-logo {
-    margin-bottom: 7rem
+    margin-bottom: 7rem;
 }
 
 #auth #auth-left .auth-logo img {
-    height: 2rem
+    height: 100px; /* ✅ FIXED: Set a specific height */
+    width: auto; /* This keeps the aspect ratio correct */
 }
 
+/* Media Queries for responsiveness */
 @media screen and (max-width: 1399.9px) {
     #auth #auth-left {
         padding: 3rem
@@ -56,6 +70,7 @@ body {
     }
 }
 
+/* Dark theme specific styles */
 html[data-bs-theme=dark] #auth-right {
-    background: url(./png/4853433.png), linear-gradient(90deg, #2d499d, #3f5491)
+    background: url(../png/4853433.png), linear-gradient(90deg, #2d499d, #3f5491)
 }

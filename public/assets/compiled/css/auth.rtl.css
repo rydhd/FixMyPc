@@ -9,7 +9,18 @@ body {
 
 #auth #auth-right {
     height: 100%;
-    background: url(./png/4853433.png), linear-gradient(-90deg, #2d499d, #3f5491)
+    background: url("../png/FixMyPc bg.png") no-repeat;
+    background-size: cover;
+    /* Move image 50px to the left and keep it vertically centered */
+    background-position: -360px center;
+}
+
+#auth #auth-right-register {
+    height: 100%;
+    background: url("../png/FixMyPc bg.png") no-repeat;
+    background-size: cover;
+    /* Move image 50px to the left and keep it vertically centered */
+    background-position: -530px center;
 }
 
 #auth #auth-left {
@@ -24,15 +35,16 @@ body {
 #auth #auth-left .auth-subtitle {
     font-size: 1.7rem;
     line-height: 2.5rem;
-    color: #000000
+    color: #C4CEEE;
 }
 
 #auth #auth-left .auth-logo {
-    margin-bottom: 7rem
+    margin-bottom: 7rem;
 }
 
 #auth #auth-left .auth-logo img {
-    height: 2rem
+    height: 100px; /* Adjust this value to your desired size */
+    width: auto; /* This keeps the aspect ratio correct */
 }
 
 @media screen and (max-width: 1399.9px) {
@@ -54,5 +66,5 @@ body {
 }
 
 html[data-bs-theme=dark] #auth-right {
-    background: url(./png/4853433.png), linear-gradient(-90deg, #2d499d, #3f5491)
+    background: url(../png/4853433.png), linear-gradient(-90deg, #2d499d, #3f5491)
 }

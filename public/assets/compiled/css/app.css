@@ -23578,7 +23578,8 @@ a {
 }
 
 .font-bold {
-    font-weight: 700
+    font-weight: 700;
+    color: #C4CEEE;
 }
 
 .font-extrabold {

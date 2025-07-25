@@ -1881,7 +1881,6 @@ html[data-bs-theme=dark] .row {
     align-items: center;
     justify-content: center;
     background-color: white;
-    border-radius: 10px;
 }
 
 html[data-bs-theme=dark] .row > * {
@@ -3308,6 +3307,7 @@ html[data-bs-theme=dark] .table-dark {
 html[data-bs-theme=dark] .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    background-color: #FFFFFF;
 }
 
 @media (max-width: 580.98px) {
@@ -3381,7 +3381,7 @@ html[data-bs-theme=dark] .form-control {
     display: block;
     width: 100%;
     padding: .375rem .75rem;
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 400;
     line-height: 1.5;
     color: #FFFFFF;
@@ -8839,7 +8839,7 @@ html[data-bs-theme=dark] .card .card-content {
 }
 
 html[data-bs-theme=dark] .card .card-body {
-    padding: 40px 10px;
+    padding: 30px 10px;
 
 }
 
@@ -10374,7 +10374,7 @@ html[data-bs-theme=dark] .page-heading {
 html[data-bs-theme=dark] .page-heading h3, html[data-bs-theme=dark] .page-heading .h3 {
     font-weight: 700;
     color: #041A61;
-    font-size: 3.5rem;
+    font-size: 3rem;
     font-family: "Lucida Sans Typewriter", Courier, monospace;
     display: flex;
     text-align: center;

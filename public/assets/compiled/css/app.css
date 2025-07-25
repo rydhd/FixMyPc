@@ -2122,7 +2122,7 @@ progress {
 
 .table-striped > tbody > tr:nth-of-type(odd) > * {
     --bs-table-color-type: var(--bs-table-striped-color);
-    --bs-table-bg-type: var(--bs-table-striped-bg)
+    --bs-table-bg-type: var(--bs-table-striped-bg);
 }
 
 .table-striped-columns > :not(caption) > tr > :nth-child(2n) {
@@ -2334,7 +2334,7 @@ progress {
     appearance: none;
     background-color: #ffffff;
     background-clip: padding-box;
-    border: 1px solid #000000;
+    border: 1px solid #FFFFFF;
     border-radius: .25rem;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out
 }
@@ -5085,7 +5085,7 @@ textarea.form-control-lg {
     display: flex;
     padding-left: 0;
     list-style: none;
-    margin-left: 690px;
+    margin-left: 580px;
 }
 
 .page-link {
@@ -21601,8 +21601,8 @@ body .bi:before, [class^=bi-]:before, [class*=" bi-"]:before {
 }
 
 .alert-success {
-    background-color: #28ab55;
-    color: #fff
+    background-color: #C8D2F1;
+    color: #041A61
 }
 
 .alert-success a {
@@ -22176,7 +22176,7 @@ body .bi:before, [class^=bi-]:before, [class*=" bi-"]:before {
 }
 
 .form-group[class*=has-icon-] .form-control.form-control-xl ~ .form-control-icon i:before {
-    color: #a6a8aa
+    color: #FFFFFF;
 }
 
 .form-group[class*=has-icon-] .form-control-icon {
@@ -23606,7 +23606,7 @@ a {
 }
 
 .text-gray-600 {
-    color: #6c757d !important
+    color: #D6D5F2 !important
 }
 
 .btn-xl {

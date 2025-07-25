@@ -37,7 +37,7 @@
             // This adds the default search box and pagination
             "dom": '<"row"<"col-sm-12"l><"col-md-6">>' +
                 '<"row"<"col-sm-12"tr>>' +
-                '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                '<"row"<"col-sm-12 col-md-5"><"col-sm-12 col-md-7"p>>',
         });
     });
 </script>

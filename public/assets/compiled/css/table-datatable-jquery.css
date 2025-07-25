@@ -39,5 +39,8 @@ table.dataTable tbody tr {
 
 div.dataTables_wrapper div.dataTables_info {
     padding-top: .4rem;
-    margin-left: 10px
+    margin-left: 10px;
+    color: #041A61;
+    width: 300px;
+
 }

@@ -28,7 +28,7 @@ class Database extends Config
         'DSN'          => '',
         'hostname'     => 'localhost',
         'username'     => 'root',
-        'password'     => 'ToshioRei',
+        'password'     => '1234',
         'database'     => 'fixmypc_db',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',

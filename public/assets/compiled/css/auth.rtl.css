@@ -12,7 +12,7 @@ body {
     background: url("../png/FixMyPc bg.png") no-repeat;
     background-size: cover;
     /* Move image 50px to the left and keep it vertically centered */
-    background-position: -360px center;
+    background-position: -460px ;
 }
 
 #auth #auth-right-register {
@@ -39,12 +39,12 @@ body {
 }
 
 #auth #auth-left .auth-logo {
-    margin-bottom: 7rem;
+    margin-bottom: 2rem;
 }
 
 #auth #auth-left .auth-logo img {
-    height: 100px; /* Adjust this value to your desired size */
-    width: auto; /* This keeps the aspect ratio correct */
+    height: 150px; /* Adjust this value to your desired size */
+    width: 150px; /* This keeps the aspect ratio correct */
 }
 
 @media screen and (max-width: 1399.9px) {

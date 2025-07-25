@@ -23,7 +23,7 @@
                 <li class="sidebar-item">
                     <a href="/instructor/students" class='sidebar-link'>
                         <i class="bi bi-people-fill"></i>
-                        <span>Students</span>
+                        <span>Student</span>
                     </a>
                 </li>
                 <li class="sidebar-item">

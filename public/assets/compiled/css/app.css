@@ -5084,7 +5084,8 @@ textarea.form-control-lg {
     --bs-pagination-disabled-border-color: #dee2e6;
     display: flex;
     padding-left: 0;
-    list-style: none
+    list-style: none;
+    margin-left: 690px;
 }
 
 .page-link {
@@ -6001,7 +6002,7 @@ textarea.form-control-lg {
 }
 
 .modal-footer > * {
-    margin: calc(var(--bs-modal-footer-gap) * .5)
+    margin-top: 10px;
 }
 
 @media (min-width: 576px) {
@@ -8930,7 +8931,9 @@ textarea.form-control-lg {
 }
 
 .text-center {
-    text-align: center !important
+    text-align: center !important;
+    margin-top: 100px;
+
 }
 
 .text-decoration-none {
@@ -9221,7 +9224,7 @@ textarea.form-control-lg {
 
 .bg-success {
     --bs-bg-opacity: 1;
-    background-color: rgba(var(--bs-success-rgb), var(--bs-bg-opacity)) !important
+    background-color: #041A61
 }
 
 .bg-info {
@@ -9236,7 +9239,7 @@ textarea.form-control-lg {
 
 .bg-danger {
     --bs-bg-opacity: 1;
-    background-color: rgba(var(--bs-danger-rgb), var(--bs-bg-opacity)) !important
+    background-color: #041A61
 }
 
 .bg-light {
@@ -21933,7 +21936,7 @@ body .bi:before, [class^=bi-]:before, [class*=" bi-"]:before {
 }
 
 .card .card-header h4, .card .card-header .h4 {
-    font-size: 1.2rem;
+    font-size: 2.5rem;
     font-weight: 700
 }
 
@@ -21947,7 +21950,7 @@ body .bi:before, [class^=bi-]:before, [class*=" bi-"]:before {
 
 .card .card-body {
     padding: 1.5rem;
-    border: 20px
+    border: 20px;
 }
 
 .card .card-heading {

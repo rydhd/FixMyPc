@@ -64,16 +64,11 @@
                     <input type="password" name="password_confirm" id="password_confirm" class="form-control" placeholder="Confirm new password" readonly>
                 </div>
 
-                <div class="form-group">
-                    <button type="button" class="btn btn-primary rounded-pill" id="editButton">Edit Profile</button>
-                    <button type="submit" class="btn btn-primary" id="saveButton" style="display: none;">Save Changes</button>
-                    <button type="button" class="btn btn-primary rounded-pill" id="cancelButton" style="display: none;">Cancel</button>
-                </div>
+
             </form>
         </div>
 
         <div class="column-right">
-            <div class="card">
                 <div class="card-body text-center">
                     <div class="avatar avatar-2xl">
                         <img src="<?= base_url('assets/static/images/faces/2.jpg') ?>" alt="Avatar">
@@ -85,7 +80,11 @@
                     <p class="text-muted">
                         Grade Level: <?= esc($instructor['grade_level'] ?? '') ?>
                     </p>
-                </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary rounded-pill" id="editButton">Edit Profile</button>
+                        <button type="submit" class="btn btn-primary" id="saveButton" style="display: none;">Save Changes</button>
+                        <button type="button" class="btn btn-primary rounded-pill" id="cancelButton" style="display: none;">Cancel</button>
+                    </div>
             </div>
         </div>
     </div>

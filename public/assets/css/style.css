@@ -1,8 +1,8 @@
 /* public/assets/css/style.css */
 
 @font-face {
-    font-family: 'VT323'; /* You give it a name you'll use in font-family */
-    src: url('../fonts/VT323-Regular.ttf') format('truetype'); /* Path to your font file */
+    font-family: 'Pixelify Sans'; /* You give it a name you'll use in font-family */
+    src: url('../fonts/PixelifySans[wght].ttf') format('truetype'); /* Path to your font file */
     font-weight: normal;
     font-style: normal;
     font-display: swap; /* Tells the browser how to display text while the font is loading */
@@ -10,7 +10,7 @@
 
 /* Now, apply this font globally */
 body {
-    font-family: 'VT323', monospace; /* Use your custom font, with a generic monospace fallback */
+    font-family: 'Pixelify Sans', monospace; /* Use your custom font, with a generic monospace fallback */
     font-size: 16px; /* Adjust base font size as VT323 might need to be larger for readability */
     line-height: 1.5;
 }
@@ -21,7 +21,7 @@ input, button, select, textarea,
 .form-label, .table thead th, .btn, .nav-link,
 .sidebar-link, .text-subtitle,
 .font-semibold, .font-extrabold {
-    font-family: 'VT323', monospace !important; /* Use !important if needed to override template styles */
+    font-family: 'Pixelify Sans', monospace !important; /* Use !important if needed to override template styles */
     /* Adjust font-size for these specific elements if they still look off */
 }
 
@@ -72,7 +72,7 @@ input, button, select, textarea,
     width: 100%;
     margin-bottom: 1rem;
     color: var(--text-color); /* Text color set in :root */
-    font-family: 'VT323', monospace;
+    font-family: 'Pixelify Sans', monospace;
 }
 
 /* Table border styles */
@@ -123,7 +123,7 @@ input, button, select, textarea,
 /* Apply pixel font to card titles and text within this section */
 .card-header h4.card-title,
 .card-text {
-    font-family: 'VT323', monospace !important;
+    font-family: 'Pixelify Sans', monospace !important;
     color: var(--text-color); /* Ensure text contrasts with card/table background */
 }
 

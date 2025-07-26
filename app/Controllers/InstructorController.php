@@ -7,7 +7,6 @@ use App\Models\StudentModel;
 
 class InstructorController extends BaseController
 {
-    // ... dashboard() and profile() methods remain the same ...
     public function dashboard()
     {
         $instructorModel = new InstructorModel();

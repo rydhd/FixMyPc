@@ -87,7 +87,6 @@
                                 <?php endif; ?>
                             </select>
                         </div>
-                        <div class="form-group"><label for="add_code">Student Code</label><input type="text" id="add_code" name="code" class="form-control"></div>
                         <div class="form-group"><label for="add_password">Password</label><input type="password" id="add_password" name="password" class="form-control" autocomplete="new-password"></div>
                     </div>
                     <div class="modal-footer">

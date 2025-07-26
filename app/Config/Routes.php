@@ -6,7 +6,7 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-$routes->get('/', 'Home::index');
+$routes->get('/', 'LoginController::loginView', ['filter' => 'guest']);
 
 // This tells the app to use your controller for login and logout
 $routes->get('login', 'LoginController::loginView', ['filter' => 'guest']);

@@ -18,19 +18,17 @@ Installation
 Clone the repository:
 git clone https://github.com/rydhd/FixMyPc.git
 
-Navigate to the project directory:
-cd FixMyPc
+Navigate to the project directory
 
 Install dependencies:
-composer install (for backend)
+composer require codeigniter4/shield (if missing)
 
-Set up your .env file and configure your database connection.
+Set up your Database.php file and configure your database connection.
 
 Run database migrations:
 php spark migrate
 
 🕹️ Usage Guide
-Usage
 
 Start the local development server:
 php spark serve
@@ -44,12 +42,8 @@ Username: masteradmin@gmail.com
 
 Password: masterkey31
 
-Explore the dashboard to manage students, monitor student progress, and view leaderboards with analytics.
+Then navigate to Assessor Tab to generate an access code.
 
-🧑‍💻 Developers:
-Rolf Saracanlao
-Arjie Campo
-Peter Jake Torres
-Alisson Capili
-Elyza Isabel Reyes
-Renier Binlod
+Using the generated access code you can now register as a instructor.
+
+Explore the dashboard to manage students, monitor student progress, and view leaderboards with analytics.

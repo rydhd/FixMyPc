@@ -1,6 +1,6 @@
-<section class="section">
+<section class="section card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h4 class="card-title mb-0 rounded-5">Student Information</h4>
+        <h4 class="card-title mb-0">Student Information</h4>
         <div class="buttons">
             <button type="button" class="btn icon icon-left btn-primary" data-bs-toggle="modal" data-bs-target="#uploadClassListModal">
                 <i class="bi bi-plus-lg"></i>
@@ -11,7 +11,6 @@
             </button>
         </div>
     </div>
-
     <?php if (session()->getFlashdata('message')): ?>
         <div class="alert alert-success"><?= session()->getFlashdata('message') ?></div>
     <?php endif; ?>
@@ -30,7 +29,7 @@
 
     <div class="table-responsive">
         <table class="table table-striped" id="table2">
-            <thead>
+            <thead class="table-light">
             <tr>
                 <th>LAST NAME</th>
                 <th>FIRST NAME</th>
@@ -70,10 +69,6 @@
                         </td>
                     </tr>
                 <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="7" class="text-center">No students found.</td>
-                </tr>
             <?php endif; ?>
             </tbody>
         </table>

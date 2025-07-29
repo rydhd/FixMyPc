@@ -12,7 +12,7 @@ body {
     background: url("../png/FixMyPc bg.png") no-repeat;
     background-size: cover;
     /* Move image 50px to the left and keep it vertically centered */
-    background-position: -460px ;
+    background-position: -320px;
 }
 
 #auth #auth-right-register {
@@ -20,7 +20,23 @@ body {
     background: url("../png/FixMyPc bg.png") no-repeat;
     background-size: cover;
     /* Move image 50px to the left and keep it vertically centered */
-    background-position: -530px center;
+    background-position: -470px center;
+}
+
+#auth #auth-right-forgot {
+    height: 100%;
+    background: url("../png/FixMyPc bg.png") no-repeat;
+    background-size: cover;
+    /* Move image 50px to the left and keep it vertically centered */
+    background-position: -230px;
+}
+
+#auth #auth-right-magic {
+    height: 100%;
+    background: url("../png/FixMyPc bg.png") no-repeat;
+    background-size: cover;
+    /* Move image 50px to the left and keep it vertically centered */
+    background-position: -230px;
 }
 
 #auth #auth-left {

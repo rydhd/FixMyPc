@@ -12,7 +12,7 @@
                     </div>
                     <div class="flex-grow-1 ms-3">
                         <h6 class="text-muted mb-1">Number of Students</h6>
-                        <h5 class="mb-0">50</h5>
+                        <h5 class="mb-0"><?= $student_count ?? '0' ?></h5>
                     </div>
                 </div>
             </div>

@@ -2,7 +2,6 @@
 A web-based educational system integrated with a masteradmin and instructor dashboard designed to enhance student engagement and allow educators to monitor learning progress in real time.
 
 🛠️ Technologies Used:
-Technologies Used
 
 Built with PHP (CodeIgniter 4), and MySQL
 

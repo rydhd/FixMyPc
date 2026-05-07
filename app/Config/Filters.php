@@ -73,9 +73,12 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
-            // 'honeypot',
-             'csrf',
-            // 'invalidchars',
+            'csrf' => [
+                'except' => [
+                    'api/auth/login', // Add this line to allow Godot through
+                    // 'api/*'        // Or use this to allow all API routes
+                ]
+            ]
         ],
         'after' => [
             // 'honeypot',
@@ -107,5 +110,13 @@ class Filters extends BaseFilters
      *
      * @var array<string, array<string, list<string>>>
      */
-    public array $filters = [];
+    public array $filters = [
+        'auth' => [
+            'before' => [
+                'admin/*',
+                'dashboard/*',
+                // Make sure 'api/auth/login' is NOT in this list!
+            ]
+        ]
+    ];
 }

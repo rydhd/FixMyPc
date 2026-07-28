@@ -2,7 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Models\AccessCodeModel; // 👈 Add this line
+use App\Models\AccessCodeModel;
+use App\Models\InstructorModel; // <--- NEW: Import the InstructorModel
 use CodeIgniter\Events\Events;
 use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\Shield\Entities\User;
@@ -10,8 +11,6 @@ use CodeIgniter\Shield\Exceptions\ValidationException;
 use CodeIgniter\Shield\Models\UserModel;
 use CodeIgniter\Shield\Traits\Viewable;
 
-// Note: The original file had a comment about a namespace fix.
-// Assuming App\Controllers is the correct namespace.
 class RegisterController extends \CodeIgniter\Shield\Controllers\RegisterController
 {
     use Viewable;
@@ -74,6 +73,16 @@ class RegisterController extends \CodeIgniter\Shield\Controllers\RegisterControl
 
         // Add user to the 'instructor' group
         $user->addGroup('user');
+
+        // ---> NEW FIX: Create the initial instructor profile in the database <---
+        $instructorModel = new InstructorModel();
+        $instructorModel->skipValidation(true)->insert([
+            'user_id'    => $user->id,
+            'first_name' => 'New',
+            'last_name'  => 'Instructor'
+        ]);
+        // -------------------------------------------------------------------------
+
         // ❗ Custom logic ends here
 
         Events::trigger('register', $user);

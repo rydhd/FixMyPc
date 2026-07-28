@@ -30,19 +30,23 @@ class Auth extends ResourceController
         $student = $studentModel->where('code', $code)->first();
 
         // 4. Verify the student exists AND the password matches the hash
-        if ($student && password_verify($password, $student['password'])) {
+        // Inside App\Controllers\Api\Auth::login
 
-            // Login Successful! Send a 200 response with the user's real data.
+        if ($student && password_verify($password, $student['password'])) {
             return $this->respond([
                 'message' => 'Login Successful',
                 'userData' => [
                     'first_name'  => $student['first_name'],
                     'last_name'   => $student['last_name'],
                     'section'     => $student['section'],
-                    'grade_level' => $student['grade_level']
+                    'grade_level' => $student['grade_level'],
+                    // --- NEW: Send saved progress back to the game ---
+                    'coc_level'   => $student['coc_level'] ?? '0',
+                    'score'       => $student['score'] ?? 0,
+                    'status'      => $student['status'] ?? 'Not Started',
+                    'save_data'   => $student['save_data'] ?? '[]'
                 ]
             ], 200);
-
         } else {
             // Login Failed! Send a 401 Unauthorized response.
             return $this->failUnauthorized('Invalid student code or password.');

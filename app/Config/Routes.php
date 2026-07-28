@@ -18,6 +18,7 @@ $routes->get('register', 'RegisterController::registerView', ['filter' => 'guest
 $routes->post('register', 'RegisterController::registerAction');
 
 $routes->post('api/auth/login', 'Api\Auth::login');
+$routes->post('api/game/update-progress', 'Api\Game::updateProgress');
 
 // --- DASHBOARD ROUTES ---
 // Grouping routes that require a logged-in session.

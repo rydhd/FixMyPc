@@ -75,8 +75,8 @@ class Filters extends BaseFilters
         'before' => [
             'csrf' => [
                 'except' => [
-                    'api/auth/login', // Add this line to allow Godot through
-                    // 'api/*'        // Or use this to allow all API routes
+                    'api/auth/login',
+                    'api/game/update-progress',
                 ]
             ]
         ],

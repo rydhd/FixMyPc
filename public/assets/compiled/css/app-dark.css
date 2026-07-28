@@ -1994,7 +1994,8 @@ html[data-bs-theme=dark] .col-11 {
 html[data-bs-theme=dark] .col-12 {
     flex: 0 0 auto;
     width: 100%;
-    margin: 0px 0px 0px 0px
+    margin: 0px 0px 0px 0px;
+    min-height: 500px;
 }
 
 html[data-bs-theme=dark] .offset-1 {
@@ -2191,7 +2192,8 @@ html[data-bs-theme=dark] .g-5, html[data-bs-theme=dark] .gy-5 {
 
     html[data-bs-theme=dark] .col-sm-12 {
         flex: 0 0 auto;
-        width: 100%
+        width: 100%;
+        margin-left: 50px;
     }
 
     html[data-bs-theme=dark] .offset-sm-0 {
@@ -3479,6 +3481,7 @@ html[data-bs-theme=dark] .form-control-sm {
     padding: .25rem .5rem;
     font-size: .875rem;
     border-radius: .2rem;
+    margin-top: 15px;
 }
 
 html[data-bs-theme=dark] .form-control-sm::file-selector-button {
@@ -3594,6 +3597,7 @@ html[data-bs-theme=dark] .form-select-sm {
     padding-left: .5rem;
     font-size: .875rem;
     border-radius: .2rem;
+    margin-left: 10px;
 }
 
 html[data-bs-theme=dark] .form-select-lg {
@@ -6107,7 +6111,9 @@ html[data-bs-theme=dark] .pagination {
     --bs-pagination-disabled-border-color: #000;
     display: flex;
     padding-left: 0;
-    list-style: none
+    list-style: none;
+    margin-left: 50px;
+    justify-content: flex-start;
 }
 
 html[data-bs-theme=dark] .page-link {
@@ -8793,9 +8799,20 @@ html[data-bs-theme=dark] .card .card-content {
     position: relative
 }
 
-html[data-bs-theme=dark] .card .card-body {
-    padding: 10px;
+/* Target the main card container to adjust overall width */
+.card {
+    min-width: 300px;
+    /* Note: If the card is inside a Bootstrap grid column (like .col-4),
+       you may need to change the grid class in the HTML instead of forcing min-width here. */
+}
 
+/* Target the card body for internal spacing and flex alignment */
+.card .card-body {
+    display: flex;
+    align-items: center; /* Vertically centers the icon and text */
+    justify-content: flex-start; /* Aligns content to the left */
+    gap: 20px; /* A reasonable gap to separate the icon and text */
+    padding: 20px 40px; /* Increases the internal padding */
 }
 
 html[data-bs-theme=dark] .card .card-heading {
@@ -9435,13 +9452,13 @@ html[data-bs-theme=dark] .sidebar-wrapper {
 }
 
 html[data-bs-theme=dark] .sidebar-wrapper .sidebar-header {
-    padding: 2rem 2rem 1rem 4rem;
-    font-size: 2rem;
+    padding-left: 38px;
+    font-size: 3rem;
     font-weight: 700
 }
 
 html[data-bs-theme=dark] .sidebar-wrapper .sidebar-header img {
-    height: 7rem
+    height: 70px;
 }
 
 html[data-bs-theme=dark] .sidebar-wrapper .sidebar-toggler.x {

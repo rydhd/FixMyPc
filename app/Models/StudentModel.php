@@ -26,7 +26,11 @@ class StudentModel extends Model
         'section',
         'grade_level',
         'code',
-        'password'
+        'password',
+        'coc_level', // New field
+        'score',     // New field
+        'status',     // New field
+        'save_data'
     ];
 
     /**

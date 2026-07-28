@@ -22923,7 +22923,7 @@ body .bi:before, [class^=bi-]:before, [class*=" bi-"]:before {
 }
 
 .layout-horizontal .header-top .logo img {
-    height: 20px
+    height: 20px;
 }
 
 .layout-horizontal .header-top-right {

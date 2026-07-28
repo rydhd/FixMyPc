@@ -5,6 +5,6 @@
     </div>
 
     <div class="card-body rounded-2">
-        <div id="chart-profile-visit"></div>
+        <div id="chart-profile-visit" style="min-height: 500px"></div>
     </div>
 </div>

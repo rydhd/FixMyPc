@@ -132,7 +132,21 @@ class MasterAdminController extends BaseController
 
         return view('master_admin/master_access_codes', $data);
     }
+    public function deleteInstructor(int $instructorId)
+    {
+        $instructorModel = new \App\Models\InstructorModel();
 
+        // Find the instructor to ensure it exists before trying to delete
+        if ($instructorModel->find($instructorId)) {
+            // Delete the instructor record
+            $instructorModel->delete($instructorId);
+            // Redirect back to the instructor list with a success message
+            return redirect()->to('/master/instructor')->with('message', 'Instructor successfully deleted.');
+        }
+
+        // If the instructor wasn't found, redirect with an error
+        return redirect()->to('/master/instructor')->with('error', 'Instructor not found or could not be deleted.');
+    }
     /**
      * Generates a new unique access code.
      */

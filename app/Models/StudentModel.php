@@ -55,7 +55,8 @@ class StudentModel extends Model
         'first_name'  => 'required|alpha_space|max_length[150]',
         'middle_name' => 'permit_empty|alpha_space|max_length[150]',
         'last_name'   => 'required|alpha_space|max_length[150]',
-        'section'     => 'required|string|max_length[100]',
+        // Changed 'required' to 'permit_empty' to make section optional
+        'section'     => 'permit_empty|string|max_length[100]',
         'grade_level' => 'required|string|max_length[50]',
         // 'code' is permit_empty on insert, and required|is_unique on update if changed
         'code'        => 'permit_empty|alpha_numeric_punct|max_length[100]|is_unique[students.code,id,{id}]',

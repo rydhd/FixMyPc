@@ -62,6 +62,11 @@ $routes->group('master', ['filter' => ['session', 'group:masteradmin,superadmin'
     // GET /master/access-codes -> MasterAdminController::accessCodes()
     $routes->get('access-codes', 'MasterAdminController::accessCodes', ['as' => 'master_access_codes']);
 
+    // app/Config/Routes.php
+
+    // Add it exactly like this inside the group:
+    $routes->get('instructor/delete/(:num)', 'MasterAdminController::deleteInstructor/$1');
+
     // Defines the route for the "Generate Code" button's POST request.
     // POST /master/generate-code -> MasterAdminController::generateCode()
     $routes->post('generate-code', 'MasterAdminController::generateCode', ['as' => 'master_generate_code']);

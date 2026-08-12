@@ -14,16 +14,16 @@
         </div>
     </div>
 
-        <div class="card-body rounded-4">
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    <?= $this->include('instructor_partials/student_table') ?>
-                </div>
-                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <?= $this->include('instructor_partials/statistics_table') ?>
-                </div>
+    <div class="card-body rounded-4">
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <?= $this->include('instructor_partials/student_table') ?>
+            </div>
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <?= $this->include('instructor_partials/statistics_table') ?>
             </div>
         </div>
+    </div>
 
     <div class="modal fade" id="deleteAllStudentsModal" tabindex="-1" aria-labelledby="deleteAllStudentsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -78,8 +78,9 @@
                         <div class="form-group"><label for="add_grade_level">Grade Level</label><input type="text" id="add_grade_level" name="grade_level" class="form-control"></div>
                         <div class="form-group">
                             <label for="add_section">Section</label>
-                            <select id="add_section" name="section" class="form-select" required>
-                                <option value="" disabled selected>Select a Section</option>
+                            <!-- Removed 'required' from select and 'disabled' from default option -->
+                            <select id="add_section" name="section" class="form-select">
+                                <option value="" selected>Select a Section (Optional)</option>
                                 <?php if (!empty($sections)) : ?>
                                     <?php foreach ($sections as $section) : ?>
                                         <option value="<?= esc($section) ?>"><?= esc($section) ?></option>
@@ -133,8 +134,9 @@
                         <div class="form-group"><label for="edit_grade_level">Grade Level</label><input type="text" id="edit_grade_level" name="grade_level" class="form-control"></div>
                         <div class="form-group">
                             <label for="edit_section">Section</label>
-                            <select id="edit_section" name="section" class="form-select" required>
-                                <option value="" disabled>Select a Section</option>
+                            <!-- Removed 'required' from select and 'disabled' from default option -->
+                            <select id="edit_section" name="section" class="form-select">
+                                <option value="">Select a Section (Optional)</option>
                                 <?php if (!empty($sections)) : ?>
                                     <?php foreach ($sections as $section) : ?>
                                         <option value="<?= esc($section) ?>"><?= esc($section) ?></option>

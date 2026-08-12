@@ -12,7 +12,60 @@ class InstructorController extends BaseController
         $instructorModel = new InstructorModel();
         $instructorId = auth()->id();
 
+        // 1. Get the total student count for this instructor
         $data['student_count'] = $instructorModel->countStudents($instructorId);
+
+        // 2. Fetch all students for this instructor
+        $allStudents = $instructorModel->getStudents($instructorId);
+
+        // 3. Sort students by their score in descending order (For the Top 10 Modal)
+        usort($allStudents, function($a, $b) {
+            $scoreA = is_array($a) ? ($a['score'] ?? 0) : ($a->score ?? 0);
+            $scoreB = is_array($b) ? ($b['score'] ?? 0) : ($b->score ?? 0);
+            return $scoreB <=> $scoreA; // Sorts highest to lowest
+        });
+
+        // 4. Get only the top 10 students
+        $data['top_students'] = array_slice($allStudents, 0, 10);
+
+        // 5. Calculate Average Score Per Section (For the Bar Graph)
+        $sectionStats = [];
+        foreach ($allStudents as $student) {
+            // Adjust 'section' and 'score' if your database columns are named differently
+            $section = is_array($student) ? ($student['section'] ?? 'Unassigned') : ($student->section ?? 'Unassigned');
+            $score   = is_array($student) ? ($student['score'] ?? 0) : ($student->score ?? 0);
+
+            if (!isset($sectionStats[$section])) {
+                $sectionStats[$section] = [
+                    'total_score' => 0,
+                    'student_count' => 0
+                ];
+            }
+
+            $sectionStats[$section]['total_score'] += (float)$score;
+            $sectionStats[$section]['student_count'] += 1;
+        }
+
+        $chartLabels = [];
+        $chartData = [];
+
+        // Sort sections alphabetically so the chart looks organized
+        ksort($sectionStats);
+
+        foreach ($sectionStats as $section => $stats) {
+            $chartLabels[] = (string)$section;
+
+            // Calculate average score and round to 2 decimal places
+            $averageScore = $stats['student_count'] > 0
+                ? round($stats['total_score'] / $stats['student_count'], 2)
+                : 0;
+
+            $chartData[] = $averageScore;
+        }
+
+        // Encode as JSON so JavaScript can read it in the view
+        $data['chart_labels'] = json_encode($chartLabels);
+        $data['chart_data']   = json_encode($chartData);
 
         return view('instructor/dashboard', $data);
     }
@@ -80,7 +133,7 @@ class InstructorController extends BaseController
             'first_name'  => 'required|alpha_space|max_length[150]',
             'last_name'   => 'required|alpha_space|max_length[150]',
             'middle_name' => 'permit_empty|alpha_space|max_length[150]',
-            'section'     => 'required|string|max_length[100]',
+            'section'     => 'permit_empty|string|max_length[100]',
             'grade_level' => 'required|string|max_length[50]',
             'password'    => 'permit_empty|min_length[8]',
         ];

@@ -1,3 +1,13 @@
+// 1. Setup dynamic fallbacks
+const finalChartLabels = (typeof dynamicChartLabels !== 'undefined' && dynamicChartLabels.length > 0)
+    ? dynamicChartLabels
+    : ["Section A", "Section B", "Section C", "Section D", "Section E", "Section F"];
+
+const finalChartData = (typeof dynamicChartData !== 'undefined' && dynamicChartData.length > 0)
+    ? dynamicChartData
+    : [88, 76, 92, 81, 68, 95];
+
+// 2. Configure optionsProfileVisit to use the variables
 var optionsProfileVisit = {
   annotations: {
     position: "back",
@@ -5,9 +15,8 @@ var optionsProfileVisit = {
   dataLabels: {
     enabled: false,
   },
-  // ADDED: A title for the chart
   title: {
-    text: 'Section Performance (%)',
+    text: 'Section Performance (%)', // Updated title
     align: 'center'
   },
   chart: {
@@ -20,36 +29,30 @@ var optionsProfileVisit = {
   plotOptions: {},
   series: [
     {
-      // CHANGED: Series name to be more descriptive
-      name: "Average Score",
-      // CHANGED: Data to reflect percentages for each section
-      data: [88, 76, 92, 81, 68, 95],
+      name: "Average Score", // Updated series name
+      data: finalChartData,
     },
   ],
   colors: "#435ebe",
   xaxis: {
-    // CHANGED: Categories to represent sections instead of months
-    categories: [
-      "Section A",
-      "Section B",
-      "Section C",
-      "Section D",
-      "Section E",
-      "Section F",
-    ],
+    categories: finalChartLabels,
   },
-  // ADDED: Y-axis configuration to format labels as percentages
   yaxis: {
     title: {
-      text: "Percentage Completed (%)"
+      text: "Percentage Completed (%)" // Updated Y-axis title
     },
     labels: {
       formatter: function (val) {
-        return val + "%";
+        return val + "%"; // Added the "%" sign for formatting
       }
     }
   }
 }
+
+// ---------------------------------------------------------
+// The rest of your charts remain unchanged below
+// ---------------------------------------------------------
+
 let optionsVisitorsProfile = {
   series: [70, 30],
   labels: ["Male", "Female"],

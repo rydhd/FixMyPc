@@ -52,56 +52,23 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>John Doe</td>
-                            <td>98.5</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Jane Smith</td>
-                            <td>97.2</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td>Peter Jones</td>
-                            <td>96.8</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">4</th>
-                            <td>Samuel Williams</td>
-                            <td>95.5</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">5</th>
-                            <td>Linda Davis</td>
-                            <td>94.9</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">6</th>
-                            <td>Michael Brown</td>
-                            <td>93.1</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">7</th>
-                            <td>Barbara Wilson</td>
-                            <td>92.7</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">8</th>
-                            <td>Richard Taylor</td>
-                            <td>91.4</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">9</th>
-                            <td>Susan Martinez</td>
-                            <td>90.8</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">10</th>
-                            <td>Charles Anderson</td>
-                            <td>89.6</td>
-                        </tr>
+                        <?php if (!empty($top_students)): ?>
+                            <?php foreach ($top_students as $index => $student): ?>
+                                <tr>
+                                    <th scope="row"><?= $index + 1 ?></th>
+                                    <td>
+                                        <?= esc(is_array($student) ? $student['first_name'] . ' ' . $student['last_name'] : $student->first_name . ' ' . $student->last_name) ?>
+                                    </td>
+                                    <td>
+                                        <?= esc(is_array($student) ? $student['score'] : $student->score) ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="3" class="text-center">No student scores available yet.</td>
+                            </tr>
+                        <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -110,6 +77,12 @@
             </div>
         </div>
     </div>
+
+    <!-- Inject CodeIgniter data into JavaScript for ApexCharts to use -->
+    <script>
+        const dynamicChartLabels = <?= $chart_labels ?? '[]' ?>;
+        const dynamicChartData = <?= $chart_data ?? '[]' ?>;
+    </script>
 
 <?= $this->include('instructor_partials/chart') ?>
 <?= $this->endSection() ?>
